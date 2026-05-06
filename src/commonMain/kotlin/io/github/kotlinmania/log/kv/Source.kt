@@ -75,11 +75,12 @@ public fun Source.count(): Int = countDefault(this)
  * The default implementation of [Source.get].
  */
 private fun getDefault(source: Source, key: Key): Value? {
+    val targetKey = key
     var found: Value? = null
     val visitor =
         object : VisitSource {
-            override fun visitPair(keyFromSource: Key, value: Value): Result<Unit> {
-                if (key == keyFromSource) {
+            override fun visitPair(key: Key, value: Value): Result<Unit> {
+                if (targetKey == key) {
                     found = value
                 }
                 return Result.success(Unit)
