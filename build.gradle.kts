@@ -169,14 +169,14 @@ mavenPublishing {
 
     pom {
         name.set("log-kotlin")
-        description.set("Kotlin Multiplatform port of the Rust crate `log` — Logging façade")
+        description.set("Kotlin Multiplatform port of rust-lang/lo - A lightweight logging facade for Rust")
         inceptionYear.set("2026")
         url.set("https://github.com/KotlinMania/log-kotlin")
 
         licenses {
             license {
-                name.set("Apache-2.0")
-                url.set("https://opensource.org/licenses/Apache-2.0")
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
                 distribution.set("repo")
             }
         }
@@ -203,12 +203,11 @@ tasks.register("test") {
     description =
         "Runs a portable test suite (macOS + JS + WasmJS). Android and non-host native targets are intentionally excluded."
 
-    val defaultTestTasks =
-        listOf(
-            "macosArm64Test",
-            "jsNodeTest",
-            "wasmJsNodeTest",
-        )
+    val defaultTestTasks = listOf(
+        "macosArm64Test",
+        "jsNodeTest",
+        "wasmJsNodeTest",
+    )
 
     dependsOn(defaultTestTasks.mapNotNull { taskName -> tasks.findByName(taskName) })
 }
