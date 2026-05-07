@@ -151,6 +151,10 @@ package io.github.kotlinmania.log.kv
  * // kotlin.test.assertEquals("Data(a=1, b=true, c=Some data)", a.toString())
  * ```
  */
-@Deprecated("Deprecated; use VisitSource.")
-public typealias Visitor = VisitSource
-
+// In upstream Rust, `Visitor` is an unstable re-export behind `kv_unstable`:
+// `pub use self::source::Visitor;`
+//
+// Per the workspace `mod.rs` re-export workflow, we do not preserve this re-export as a Kotlin
+// `typealias`. Callers should reference `VisitSource` directly. If a caller needs to keep the
+// identifier `Visitor` unchanged for a faithful translation, it should write
+// `import io.github.kotlinmania.log.kv.VisitSource as Visitor` in the caller.
