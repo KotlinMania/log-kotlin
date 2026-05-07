@@ -54,8 +54,8 @@ package io.github.kotlinmania.log.kv
  * - `:%` will capture the value using display formatting.
  * - `:display` will capture the value using display formatting.
  * - `:err` will capture the value using `Throwable` (requires the `kv_std` feature).
- * - `:sval` will capture the value using `sval::Value` (requires the `kv_sval` feature).
- * - `:serde` will capture the value using `serde::Serialize` (requires the `kv_serde` feature).
+ * - `:sval` will capture the value using sval (requires the `kv_sval` feature).
+ * - `:serde` will capture the value using serde serialization (requires the `kv_serde` feature).
  *
  * ## Working with key-values on log records
  *
@@ -139,7 +139,7 @@ package io.github.kotlinmania.log.kv
  * The choice of serialization framework depends on the needs of the consumer.
  * If you're in a no-std environment, you can use `sval`. In other cases, you can use `serde`.
  * Log producers and log consumers don't need to agree on the serialization framework.
- * A value can be captured using its `serde::Serialize` implementation and still be serialized
+ * A value can be captured using serde serialization and still be serialized
  * through `sval` without losing any structure or data.
  *
  * Values can also always be formatted using debug and display formatting:
@@ -151,8 +151,7 @@ package io.github.kotlinmania.log.kv
  * // kotlin.test.assertEquals("Data(a=1, b=true, c=Some data)", a.toString())
  * ```
  */
-// In upstream Rust, `Visitor` is an unstable re-export behind `kv_unstable`:
-// `pub use self::source::Visitor;`
+// In upstream, `Visitor` is an unstable re-export behind a feature flag.
 //
 // Per the workspace `mod.rs` re-export workflow, we do not preserve this re-export as a Kotlin
 // `typealias`. Callers should reference `VisitSource` directly. If a caller needs to keep the
