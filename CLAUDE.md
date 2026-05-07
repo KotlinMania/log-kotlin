@@ -67,6 +67,8 @@ The discipline:
 13. **Stop at file boundaries, not function boundaries.** After every completed file, exhale,
     commit, move on.
 
+    Work until you are blocked or reach a limit.
+
 14. **Doc-port discipline applies even when the upstream doc is awkward.** If the upstream
     author wrote a tortured English sentence, translate the tortured sentence. Don't smooth it.
 
