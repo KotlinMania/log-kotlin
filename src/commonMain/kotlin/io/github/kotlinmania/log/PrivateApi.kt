@@ -1,6 +1,9 @@
 // port-lint: source src/__private_api.rs
 package io.github.kotlinmania.log
 
+import io.github.kotlinmania.log.kv.Key
+import io.github.kotlinmania.log.kv.Source
+
 /**
  * WARNING: this is not part of the crate's public API and is subject to change at any time.
  */
@@ -26,16 +29,24 @@ public typealias Value = io.github.kotlinmania.log.kv.Value
 // Types for the `kv` argument.
 
 internal sealed interface KVs {
-    public fun intoKvs(): List<Pair<String, Value>>?
+    public fun intoKvs(): Source?
 
     public data class Slice(private val kvs: List<Pair<String, Value>>) : KVs {
-        override fun intoKvs(): List<Pair<String, Value>>? = kvs
+        override fun intoKvs(): Source = kvs.intoSource()
     }
 
     public data object Empty : KVs {
-        override fun intoKvs(): List<Pair<String, Value>>? = null
+        override fun intoKvs(): Source? = null
     }
 }
+
+private fun List<Pair<String, Value>>.intoSource(): Source =
+    Source { visitor ->
+        for ((key, value) in this) {
+            visitor.visitPair(Key.fromStr(key), value).getOrElse { return@Source Result.failure(it) }
+        }
+        Result.success(Unit)
+    }
 
 // Log implementation.
 
@@ -62,7 +73,7 @@ private fun <L : Log> logImpl(
     args: Arguments,
     level: Level,
     targetModulePathAndLoc: Triple<String, String, Location>,
-    kvs: List<Pair<String, Value>>?,
+    kvs: Source?,
 ) {
     val (target, modulePath, loc) = targetModulePathAndLoc
 
@@ -81,7 +92,7 @@ private fun <L : Log> logImpl(
     logger.log(builder.build())
 }
 
-public fun <L : Log> log(
+internal fun <L : Log> log(
     logger: L,
     args: Arguments,
     level: Level,

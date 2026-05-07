@@ -244,6 +244,16 @@ public enum class LevelFilter(
 }
 
 /**
+ * Compare a [Level] directly to a [LevelFilter].
+ */
+public operator fun Level.compareTo(other: LevelFilter): Int = discriminant.compareTo(other.discriminant)
+
+/**
+ * Compare a [LevelFilter] directly to a [Level].
+ */
+public operator fun LevelFilter.compareTo(other: Level): Int = discriminant.compareTo(other.discriminant)
+
+/**
  * The "payload" of a log message.
  */
 public data class Record(
@@ -747,4 +757,3 @@ internal object LibTests {
         assertEquals(30, recordTest.line())
     }
 }
-
