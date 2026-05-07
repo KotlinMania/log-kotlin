@@ -1,4 +1,4 @@
-// port-lint: source src/kv/mod.rs
+// port-lint: source kv/mod.rs
 package io.github.kotlinmania.log.kv
 
 /**
@@ -32,7 +32,7 @@ package io.github.kotlinmania.log.kv
  * // info!(a = 1; "Something of interest");
  * ```
  *
- * Key-values support the same shorthand identifier syntax as `format_args`:
+ * Key-values support the same shorthand identifier syntax as [formatArgs]:
  *
  * ```
  * // val a = 1
@@ -53,9 +53,9 @@ package io.github.kotlinmania.log.kv
  * - `:debug` will capture the value using debug formatting.
  * - `:%` will capture the value using display formatting.
  * - `:display` will capture the value using display formatting.
- * - `:err` will capture the value using `Throwable` (requires the `kv_std` feature).
- * - `:sval` will capture the value using sval (requires the `kv_sval` feature).
- * - `:serde` will capture the value using serde serialization (requires the `kv_serde` feature).
+ * - `:err` will capture the value using `Throwable` (requires standard-error support).
+ * - `:sval` will capture the value using sval support.
+ * - `:serde` will capture the value using serde serialization support.
  *
  * ## Working with key-values on log records
  *

@@ -81,18 +81,20 @@ The discipline:
 Every Kotlin file MUST start with:
 
 ```kotlin
-// port-lint: source <path-relative-to-tmp/log>
+// port-lint: source <path-relative-to-.ast_distance_config.json source root>
 package io.github.kotlinmania.log
 ```
 
 Example:
 
 ```kotlin
-// port-lint: source src/lib.rs
+// port-lint: source lib.rs
 package io.github.kotlinmania.log
 ```
 
-This is how `ast_distance` tracks provenance. Never remove or alter unless the file is being re-targeted to a different Rust source.
+This repo's `.ast_distance_config.json` sets the source root to `tmp/log/src`, so headers are
+relative to that directory. This is how `ast_distance` tracks provenance. Never remove or alter
+unless the file is being re-targeted to a different Rust source.
 
 For files that have no single Rust counterpart (re-homed from a `mod.rs`, or pure Kotlin glue), use `// port-lint: ignore` and a one-line prose note explaining what it does.
 

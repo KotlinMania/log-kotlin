@@ -1,4 +1,4 @@
-// port-lint: source src/serde.rs
+// port-lint: source serde.rs
 package io.github.kotlinmania.log
 
 import kotlinx.serialization.KSerializer
@@ -60,4 +60,3 @@ internal object SerdeTests {
         assertEquals(LevelFilter.Trace, LevelFilter.fromStr("trace").getOrThrow())
     }
 }
-

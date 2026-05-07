@@ -1,4 +1,4 @@
-// port-lint: source src/__private_api.rs
+// port-lint: source __private_api.rs
 package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.Key
@@ -14,7 +14,7 @@ public fun formatArgs(format: String, vararg args: Any?): Arguments {
 }
 
 public fun modulePath(): String {
-    // Kotlin has no direct equivalent of Rust's `module_path!()`.
+    // Kotlin has no direct equivalent of the upstream module-path macro.
     // This is best-effort and intentionally lightweight.
     return "<module-path>"
 }
@@ -128,4 +128,16 @@ public fun captureDebug(v: Any?): Value {
 
 public fun captureDisplay(v: Any?): Value {
     return Value.fromDisplay(v)
+}
+
+public fun captureError(v: Throwable): Value {
+    return Value.fromDynError(v)
+}
+
+public fun captureSval(v: Any?): Value {
+    return Value.fromSval(v)
+}
+
+public fun captureSerde(v: Any?): Value {
+    return Value.fromSerde(v)
 }

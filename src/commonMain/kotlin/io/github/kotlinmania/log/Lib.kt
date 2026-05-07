@@ -1,4 +1,4 @@
-// port-lint: source src/lib.rs
+// port-lint: source lib.rs
 package io.github.kotlinmania.log
 
 import kotlin.concurrent.atomics.AtomicLong
@@ -571,7 +571,7 @@ public fun maxLevel(): LevelFilter {
 /**
  * Sets the global logger to a global singleton [Log] instance.
  *
- * This function may only be called once in the lifetime of a program. Any log events that occur
+ * This function may only be called once during a program. Any log events that occur
  * before the call to this function completes will be ignored.
  */
 public fun setLogger(logger: Log): Result<Unit> {

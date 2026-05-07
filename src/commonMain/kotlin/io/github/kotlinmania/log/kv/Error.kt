@@ -1,5 +1,7 @@
-// port-lint: source src/kv/error.rs
+// port-lint: source kv/error.rs
 package io.github.kotlinmania.log.kv
+
+internal typealias BoxedError = Throwable
 
 /**
  * An error encountered while working with structured data.
@@ -9,6 +11,8 @@ public class Error private constructor(
 ) : Exception() {
     private sealed interface Inner {
         data class Boxed(val err: Throwable) : Inner
+
+        data class Value(val err: Error) : Inner
 
         data class Msg(val msg: String) : Inner
 
@@ -31,11 +35,35 @@ public class Error private constructor(
         public fun boxed(err: Throwable): Error {
             return Error(Inner.Boxed(err))
         }
+
+        public fun from(err: Throwable): Error {
+            return boxed(err)
+        }
+
+        public fun fromFormat(): Error {
+            return Error(Inner.Fmt)
+        }
+
+        internal fun fromValue(err: Error): Error {
+            return Error(Inner.Value(err))
+        }
+    }
+
+    internal fun intoValue(): Error {
+        return when (val currentInner = inner) {
+            is Inner.Value -> currentInner.err
+            else -> this
+        }
+    }
+
+    public fun fmt(): String {
+        return toString()
     }
 
     public override fun toString(): String {
         return when (val currentInner = inner) {
             is Inner.Boxed -> currentInner.err.toString()
+            is Inner.Value -> currentInner.err.toString()
             is Inner.Msg -> currentInner.msg
             Inner.Fmt -> FMT_ERROR_MESSAGE
         }

@@ -1,4 +1,4 @@
-// port-lint: source src/macros.rs
+// port-lint: source macros.rs
 package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.ToValue
@@ -25,7 +25,7 @@ import io.github.kotlinmania.log.kv.ToValue
  * val privateData = "private"
  *
  * log(
- *     target = "app_events",
+ *     target = "appEvents",
  *     level = Level.Error,
  *     args = formatArgs("Received errors: {}, {}", data.first, data.second),
  * )
