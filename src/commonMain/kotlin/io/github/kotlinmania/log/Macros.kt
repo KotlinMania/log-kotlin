@@ -2,6 +2,7 @@
 package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.ToValue
+import io.github.kotlinmania.log.kv.Value
 
 
 /**
