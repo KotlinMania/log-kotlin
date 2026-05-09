@@ -1,4 +1,4 @@
-// port-lint: source src/kv/source.rs
+// port-lint: source kv/source.rs
 package io.github.kotlinmania.log.kv
 
 /**
