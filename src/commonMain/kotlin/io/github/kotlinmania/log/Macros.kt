@@ -62,7 +62,7 @@ public fun log(
     level: Level,
     args: Arguments,
 ) {
-    log(
+    logImpl(
         logger = __logGlobalLogger,
         target = modulePath(),
         level = level,
@@ -76,7 +76,7 @@ public fun log(
     level: Level,
     args: Arguments,
 ) {
-    log(
+    logImpl(
         logger = __logGlobalLogger,
         target = target,
         level = level,
@@ -90,7 +90,7 @@ public fun log(
     level: Level,
     args: Arguments,
 ) {
-    log(
+    logImpl(
         logger = logger,
         target = modulePath(),
         level = level,
@@ -105,7 +105,7 @@ public fun log(
     level: Level,
     args: Arguments,
 ) {
-    log(
+    logImpl(
         logger = logger,
         target = target,
         level = level,
@@ -121,7 +121,7 @@ public fun log(
     kvs: List<Pair<String, Value>>,
     args: Arguments,
 ) {
-    log(
+    logImpl(
         logger = logger,
         target = target,
         level = level,
@@ -130,7 +130,7 @@ public fun log(
     )
 }
 
-private fun log(
+private fun logImpl(
     logger: Log,
     target: String,
     level: Level,
