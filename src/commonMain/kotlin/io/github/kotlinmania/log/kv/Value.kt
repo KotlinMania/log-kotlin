@@ -1,4 +1,4 @@
-// port-lint: source src/kv/value.rs
+// port-lint: source kv/value.rs
 package io.github.kotlinmania.log.kv
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
@@ -71,6 +71,9 @@ public fun interface ToValue {
  * - **Booleans:** `Boolean`.
  * - **Integers:** `UByte`-`ULong`, `Byte`-`Long`.
  * - **Floating point numbers:** `Float`-`Double`.
+ * - **Errors:** `Throwable`.
+ * - **serde:** Any type in serde's data model.
+ * - **sval:** Any type in sval's data model.
  */
 public class Value internal constructor(
     internal val inner: ValueInner.Inner,
@@ -98,6 +101,20 @@ public class Value internal constructor(
         }
 
         /**
+         * Get a value from a type implementing serde serialization.
+         */
+        public fun fromSerde(value: Any?): Value {
+            return Value(ValueInner.Inner.fromSerde(value))
+        }
+
+        /**
+         * Get a value from a type implementing sval.
+         */
+        public fun fromSval(value: Any?): Value {
+            return Value(ValueInner.Inner.fromSval(value))
+        }
+
+        /**
          * Get a value from a dynamic debug value.
          */
         public fun fromDynDebug(value: Any?): Value {
@@ -112,14 +129,60 @@ public class Value internal constructor(
         }
 
         /**
+         * Get a value from a dynamic error.
+         */
+        public fun fromDynError(err: Throwable): Value {
+            return Value(ValueInner.Inner.fromDynError(err))
+        }
+
+        /**
          * Get a `null` value.
          */
         public fun nullValue(): Value {
             return Value(ValueInner.Inner.empty())
         }
 
+        public fun `null`(): Value {
+            return nullValue()
+        }
+
         internal fun fromInner(value: ValueInner.Inner): Value {
             return Value(value)
+        }
+
+        /**
+         * Get a value from a type implementing debug formatting.
+         */
+        public fun captureDebug(value: Any?): Value {
+            return fromDebug(value)
+        }
+
+        /**
+         * Get a value from a type implementing display formatting.
+         */
+        public fun captureDisplay(value: Any?): Value {
+            return fromDisplay(value)
+        }
+
+        /**
+         * Get a value from an error.
+         */
+        public fun captureError(err: Throwable): Value {
+            return fromDynError(err)
+        }
+
+        /**
+         * Get a value from a type implementing serde serialization.
+         */
+        public fun captureSerde(value: Any?): Value {
+            return fromSerde(value)
+        }
+
+        /**
+         * Get a value from a type implementing sval.
+         */
+        public fun captureSval(value: Any?): Value {
+            return fromSval(value)
         }
     }
 
@@ -171,6 +234,16 @@ public class Value internal constructor(
      * Try to convert this value into a borrowed string.
      */
     public fun toBorrowedStr(): String? = inner.toBorrowedStr()
+
+    /**
+     * Try to convert this value into an error.
+     */
+    public fun toBorrowedError(): Throwable? = inner.toBorrowedError()
+
+    /**
+     * Try convert this value into a string.
+     */
+    public fun toCowStr(): String? = inner.toBorrowedStr()
 
     public override fun toString(): String = ValueInner.formatDisplay(inner)
 }
@@ -241,6 +314,16 @@ public interface VisitValue {
      * Visit a Unicode character.
      */
     public fun visitChar(value: Char): Result<Unit> = visitStr(value.toString())
+
+    /**
+     * Visit an error.
+     */
+    public fun visitError(err: Throwable): Result<Unit> = visitAny(Value.fromDynError(err))
+
+    /**
+     * Visit an error.
+     */
+    public fun visitBorrowedError(err: Throwable): Result<Unit> = visitAny(Value.fromDynError(err))
 }
 
 internal object ValueInner {
@@ -267,14 +350,26 @@ internal object ValueInner {
 
         data class Display(val value: Any?) : Inner
 
+        data class ErrorValue(val value: Throwable) : Inner
+
+        data class Serde(val value: Any?) : Inner
+
+        data class Sval(val value: Any?) : Inner
+
         companion object {
             fun fromDebug(value: Any?): Inner = Debug(value)
 
             fun fromDisplay(value: Any?): Inner = Display(value)
 
+            fun fromSerde(value: Any?): Inner = Serde(value)
+
+            fun fromSval(value: Any?): Inner = Sval(value)
+
             fun fromDynDebug(value: Any?): Inner = Debug(value)
 
             fun fromDynDisplay(value: Any?): Inner = Display(value)
+
+            fun fromDynError(err: Throwable): Inner = ErrorValue(err)
 
             fun empty(): Inner = None
         }
@@ -351,6 +446,11 @@ internal object ValueInner {
             is Str -> value
             else -> null
         }
+
+        fun toBorrowedError(): Throwable? = when (this) {
+            is ErrorValue -> value
+            else -> null
+        }
     }
 
     fun formatDisplay(inner: Inner): String =
@@ -366,6 +466,9 @@ internal object ValueInner {
             is Inner.U128 -> inner.value.toString()
             is Inner.Debug -> inner.value.toString()
             is Inner.Display -> inner.value.toString()
+            is Inner.ErrorValue -> inner.value.toString()
+            is Inner.Serde -> inner.value.toString()
+            is Inner.Sval -> inner.value.toString()
         }
 
     fun visit(inner: Inner, visitor: VisitValue): Result<Unit> {
@@ -381,6 +484,9 @@ internal object ValueInner {
             is Inner.U128 -> visitor.visitU128(inner.value)
             is Inner.Debug -> visitor.visitAny(Value.fromDynDebug(inner.value))
             is Inner.Display -> visitor.visitAny(Value.fromDynDisplay(inner.value))
+            is Inner.ErrorValue -> visitor.visitBorrowedError(inner.value)
+            is Inner.Serde -> visitor.visitAny(Value.fromSerde(inner.value))
+            is Inner.Sval -> visitor.visitAny(Value.fromSval(inner.value))
         }
     }
 

@@ -1,4 +1,4 @@
-// port-lint: source src/kv/key.rs
+// port-lint: source kv/key.rs
 package io.github.kotlinmania.log.kv
 
 import kotlin.test.Test

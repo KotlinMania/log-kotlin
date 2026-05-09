@@ -1,4 +1,4 @@
-// port-lint: source src/kv/key.rs
+// port-lint: source kv/key.rs
 package io.github.kotlinmania.log.kv
 
 /**
@@ -27,6 +27,10 @@ public class Key private constructor(
         public fun fromStr(key: String): Key {
             return Key(key)
         }
+
+        public fun from(s: String): Key {
+            return fromStr(s)
+        }
     }
 
     /**
@@ -35,14 +39,18 @@ public class Key private constructor(
     public fun asStr(): String = key
 
     /**
-     * Try get a borrowed string for the lifetime `'k` from this key.
+     * Try get the string originally borrowed by this key.
      *
-     * If the key is a borrow of a longer lived string, this method will return `Some`.
-     * If the key is internally buffered, this method will return `None`.
+     * If the key is backed by a longer-lived string, this method will return a value.
+     * If the key is internally buffered, this method will return `null`.
      */
     public fun toBorrowedStr(): String? {
         return key
     }
+
+    public fun asRef(): String = asStr()
+
+    public fun borrow(): String = asStr()
 
     override fun toKey(): Key = Key(key)
 

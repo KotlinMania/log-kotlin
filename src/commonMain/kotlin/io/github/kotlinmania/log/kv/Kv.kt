@@ -1,4 +1,4 @@
-// port-lint: source src/kv/mod.rs
+// port-lint: source kv/mod.rs
 package io.github.kotlinmania.log.kv
 
 /**
@@ -32,7 +32,7 @@ package io.github.kotlinmania.log.kv
  * // info!(a = 1; "Something of interest");
  * ```
  *
- * Key-values support the same shorthand identifier syntax as `format_args`:
+ * Key-values support the same shorthand identifier syntax as [formatArgs]:
  *
  * ```
  * // val a = 1
@@ -53,9 +53,9 @@ package io.github.kotlinmania.log.kv
  * - `:debug` will capture the value using debug formatting.
  * - `:%` will capture the value using display formatting.
  * - `:display` will capture the value using display formatting.
- * - `:err` will capture the value using `Throwable` (requires the `kv_std` feature).
- * - `:sval` will capture the value using `sval::Value` (requires the `kv_sval` feature).
- * - `:serde` will capture the value using `serde::Serialize` (requires the `kv_serde` feature).
+ * - `:err` will capture the value using `Throwable` (requires standard-error support).
+ * - `:sval` will capture the value using sval support.
+ * - `:serde` will capture the value using serde serialization support.
  *
  * ## Working with key-values on log records
  *
@@ -139,7 +139,7 @@ package io.github.kotlinmania.log.kv
  * The choice of serialization framework depends on the needs of the consumer.
  * If you're in a no-std environment, you can use `sval`. In other cases, you can use `serde`.
  * Log producers and log consumers don't need to agree on the serialization framework.
- * A value can be captured using its `serde::Serialize` implementation and still be serialized
+ * A value can be captured using serde serialization and still be serialized
  * through `sval` without losing any structure or data.
  *
  * Values can also always be formatted using debug and display formatting:
@@ -151,6 +151,9 @@ package io.github.kotlinmania.log.kv
  * // kotlin.test.assertEquals("Data(a=1, b=true, c=Some data)", a.toString())
  * ```
  */
-@Deprecated("Deprecated; use VisitSource.")
-public typealias Visitor = VisitSource
-
+// In upstream, `Visitor` is an unstable re-export behind a feature flag.
+//
+// Per the workspace `mod.rs` re-export workflow, we do not preserve this re-export as a Kotlin
+// `typealias`. Callers should reference `VisitSource` directly. If a caller needs to keep the
+// identifier `Visitor` unchanged for a faithful translation, it should write
+// `import io.github.kotlinmania.log.kv.VisitSource as Visitor` in the caller.
