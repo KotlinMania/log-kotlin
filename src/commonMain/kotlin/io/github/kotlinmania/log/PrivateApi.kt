@@ -78,16 +78,13 @@ private fun <L : Log> logImpl(
     val (target, modulePath, loc) = targetModulePathAndLoc
 
     val builder = Record.builder()
-
-    builder
         .args(args)
         .level(level)
         .target(target)
         .modulePathStatic(modulePath)
         .fileStatic(loc.file)
         .line(loc.line)
-
-    builder.keyValues(kvs)
+        .keyValues(kvs)
 
     logger.log(builder.build())
 }
