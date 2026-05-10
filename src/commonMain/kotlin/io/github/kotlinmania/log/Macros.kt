@@ -118,14 +118,14 @@ public fun log(
     logger: Log,
     target: String,
     level: Level,
-    kvs: List<Pair<String, Value>>,
     args: Arguments,
+    vararg kvs: Pair<String, Value>,
 ) {
     logImpl(
         logger = logger,
         target = target,
         level = level,
-        kvs = kvs,
+        kvs = if (kvs.isEmpty()) null else kvs.asList(),
         args = args,
     )
 }
