@@ -506,7 +506,7 @@ public class MetadataBuilder internal constructor(
 }
 
 /**
- * A trait encapsulating the operations required of a logger.
+ * An interface encapsulating the operations required of a logger.
  */
 public interface Log {
     /**
@@ -604,7 +604,9 @@ public fun logger(): Log {
 /**
  * The statically resolved maximum log level.
  *
- * In this Kotlin port, this is always [LevelFilter.Trace].
+ * This value is checked by the log macros, but not by the [Log] instance returned by
+ * [logger]. Code that manually calls functions on that value should compare the
+ * level against this value.
  */
 public val STATIC_MAX_LEVEL: LevelFilter = LevelFilter.Trace
 

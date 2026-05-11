@@ -1,8 +1,6 @@
 // port-lint: source kv/error.rs
 package io.github.kotlinmania.log.kv
 
-internal typealias BoxedError = Throwable
-
 /**
  * An error encountered while working with structured data.
  */

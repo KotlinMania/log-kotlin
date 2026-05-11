@@ -4,58 +4,42 @@ package io.github.kotlinmania.log.kv
 /**
  * Structured logging.
  *
- * Add the `kv` feature to your `Cargo.toml` to enable
- * this module:
- *
- * ```toml
- * [dependencies.log]
- * features = ["kv"]
- * ```
- *
- * # Structured logging in `log`
+ * # Structured logging
  *
  * Structured logging enhances traditional text-based log records with user-defined
  * attributes. Structured logs can be analyzed using a variety of data processing
  * techniques, without needing to find and parse attributes from unstructured text first.
  *
- * In `log`, user-defined attributes are part of a [Source] on the log record.
- * Each attribute is a key-value; a pair of [Key] and [Value]. Keys are strings
- * and values are a datum of any type that can be formatted or serialized. Simple types
- * like strings, booleans, and numbers are supported, as well as arbitrarily complex
- * structures involving nested objects and sequences.
+ * User-defined attributes are part of a [Source] on the log record. Each attribute is a
+ * key-value: a pair of [Key] and [Value]. Keys are strings and values are a datum of any
+ * type that can be formatted or serialized. Simple types like strings, booleans, and
+ * numbers are supported, as well as arbitrarily complex structures involving nested
+ * objects and sequences.
  *
  * ## Adding key-values to log records
  *
- * Key-values appear before the message format in the `log!` macros:
+ * Key-values are passed alongside the message format when invoking the log helpers:
  *
  * ```
- * // info!(a = 1; "Something of interest");
+ * // info(formatArgs("Something of interest"), kv("a", 1.toValue()))
  * ```
  *
- * Key-values support the same shorthand identifier syntax as [formatArgs]:
+ * Helpers in [Macros][io.github.kotlinmania.log] capture values through the [ToValue]
+ * functional interface by default. To capture a value using a different conversion, use a
+ * dedicated builder after the key. Here's how the same example can capture `a` using its
+ * debug formatting instead:
  *
  * ```
- * // val a = 1
- * // info!(a; "Something of interest");
+ * // info(formatArgs("Something of interest"), kvDebug("a", 1))
  * ```
  *
- * Values are capturing using the [ToValue] functional interface by default. To capture a value
- * using a different trait implementation, use a modifier after its key. Here's how
- * the same example can capture `a` using its debug formatting instead:
+ * The following capturing helpers are supported:
  *
- * ```
- * // info!(a:? = 1; "Something of interest");
- * ```
- *
- * The following capturing modifiers are supported:
- *
- * - `:?` will capture the value using debug formatting.
- * - `:debug` will capture the value using debug formatting.
- * - `:%` will capture the value using display formatting.
- * - `:display` will capture the value using display formatting.
- * - `:err` will capture the value using `Throwable` (requires standard-error support).
- * - `:sval` will capture the value using sval support.
- * - `:serde` will capture the value using serde serialization support.
+ * - [kvDebug][io.github.kotlinmania.log.kvDebug] captures the value using debug formatting.
+ * - [kvDisplay][io.github.kotlinmania.log.kvDisplay] captures the value using display formatting.
+ * - [captureError][io.github.kotlinmania.log.captureError] captures the value as a [Throwable].
+ * - [captureSval][io.github.kotlinmania.log.captureSval] captures the value through the `sval` data model.
+ * - [captureSerde][io.github.kotlinmania.log.captureSerde] captures the value through serde-shaped serialization.
  *
  * ## Working with key-values on log records
  *
@@ -137,7 +121,6 @@ package io.github.kotlinmania.log.kv
  * To serialize a value to a format like JSON, you can also use either `serde` or `sval`.
  *
  * The choice of serialization framework depends on the needs of the consumer.
- * If you're in a no-std environment, you can use `sval`. In other cases, you can use `serde`.
  * Log producers and log consumers don't need to agree on the serialization framework.
  * A value can be captured using serde serialization and still be serialized
  * through `sval` without losing any structure or data.
@@ -151,9 +134,5 @@ package io.github.kotlinmania.log.kv
  * // kotlin.test.assertEquals("Data(a=1, b=true, c=Some data)", a.toString())
  * ```
  */
-// In upstream, `Visitor` is an unstable re-export behind a feature flag.
-//
-// Per the workspace `mod.rs` re-export workflow, we do not preserve this re-export as a Kotlin
-// `typealias`. Callers should reference `VisitSource` directly. If a caller needs to keep the
-// identifier `Visitor` unchanged for a faithful translation, it should write
-// `import io.github.kotlinmania.log.kv.VisitSource as Visitor` in the caller.
+// pub use self::source::Visitor;
+// Callers migrated:
