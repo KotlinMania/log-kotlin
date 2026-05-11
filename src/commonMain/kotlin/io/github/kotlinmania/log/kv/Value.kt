@@ -151,6 +151,13 @@ public class Value internal constructor(
         }
 
         /**
+         * Equivalent of upstream's `From<&str> for Value` conversion;
+         * delegates to the [String.toValue] extension. Provided so callers
+         * may write `Value.from(s)` interchangeably with `s.toValue()`.
+         */
+        public fun from(value: String): Value = value.toValue()
+
+        /**
          * Get a value from a type implementing debug formatting.
          */
         public fun captureDebug(value: Any?): Value {
@@ -245,8 +252,51 @@ public class Value internal constructor(
      */
     public fun toCowStr(): String? = inner.toBorrowedStr()
 
+    /**
+     * Format the value as a string. Kotlin equivalent of upstream's
+     * `Display::fmt` implementation; delegates to [toString].
+     */
+    public fun fmt(): String = toString()
+
+    /**
+     * Check whether this value can be downcast to [T]. Upstream removed
+     * downcasting and kept this method as a deprecated stub that
+     * unconditionally returns `false`; the Kotlin port mirrors that exact
+     * stub shape for source-compatibility with any caller that touches the
+     * `kv_unstable` API.
+     */
+    @Deprecated(
+        message = "Downcasting has been removed; this stub always returns false.",
+        level = DeprecationLevel.WARNING,
+    )
+    public fun isType(): Boolean = false
+
+    /**
+     * Try to downcast this value to [T]. Upstream removed downcasting and
+     * kept this method as a deprecated stub that unconditionally returns
+     * `null`; the Kotlin port mirrors that exact stub shape.
+     */
+    @Deprecated(
+        message = "Downcasting has been removed; this stub always returns null.",
+        level = DeprecationLevel.WARNING,
+    )
+    public fun downcastRef(): Any? = null
+
     public override fun toString(): String = ValueInner.formatDisplay(inner)
 }
+
+/**
+ * Alias for [VisitValue] preserving the upstream legacy `Visit` name. The
+ * upstream Rust crate keeps `pub use VisitValue as Visit;` gated on the
+ * `kv_unstable` feature and marks it deprecated; the Kotlin counterpart is
+ * also deprecated.
+ */
+@Deprecated(
+    message = "Use VisitValue directly.",
+    replaceWith = ReplaceWith("VisitValue"),
+    level = DeprecationLevel.WARNING,
+)
+public typealias Visit = VisitValue
 
 /**
  * A visitor for a [Value].
