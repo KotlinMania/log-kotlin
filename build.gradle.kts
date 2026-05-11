@@ -169,7 +169,7 @@ mavenPublishing {
 
     pom {
         name.set("log-kotlin")
-        description.set("Kotlin Multiplatform port of rust-lang/lo - A lightweight logging facade for Rust")
+        description.set("Kotlin Multiplatform port of rust-lang/log — a lightweight logging facade.")
         inceptionYear.set("2026")
         url.set("https://github.com/KotlinMania/log-kotlin")
 
