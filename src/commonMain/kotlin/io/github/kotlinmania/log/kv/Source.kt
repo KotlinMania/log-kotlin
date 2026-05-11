@@ -1,14 +1,20 @@
 // port-lint: source kv/source.rs
 package io.github.kotlinmania.log.kv
 
+// Sources for key-values.
+//
+// This module defines the [Source] interface and supporting APIs for working
+// with collections of key-values.
+
 /**
  * A source of key-values.
  *
- * The source may be a single pair, a set of pairs, or a filter over a set of pairs.
- * Use the [VisitSource] interface to inspect the structured data in a source.
+ * The source may be a single pair, a set of pairs, or a filter over a set of
+ * pairs. Use the [VisitSource] interface to inspect the structured data in a
+ * source.
  *
- * A source is like an iterator over its key-values, except with a push-based API
- * instead of a pull-based one.
+ * A source is like an iterator over its key-values, except with a push-based
+ * API instead of a pull-based one.
  *
  * # Examples
  *
@@ -18,25 +24,25 @@ package io.github.kotlinmania.log.kv
  * // A VisitSource that prints all key-values.
  * class Printer : VisitSource {
  *     override fun visitPair(key: Key, value: Value): Result<Unit> {
- *         println(\"$key: $value\")
+ *         println("$key: $value")
  *         return Result.success(Unit)
  *     }
  * }
  *
  * // A source with 3 key-values.
- * val source = listOf(Pair(\"a\", 1), Pair(\"b\", 2), Pair(\"c\", 3))
+ * val source = listOf("a" to 1, "b" to 2, "c" to 3).asPairSource()
  *
  * // Visit it.
- * source.asSource().visit(Printer()).getOrThrow()
+ * source.visit(Printer()).getOrThrow()
  * ```
  */
 public fun interface Source {
     /**
      * Visit key-values.
      *
-     * A source doesn't have to guarantee any ordering or uniqueness of key-values.
-     * If the given visitor returns an error then the source may early-return with it,
-     * even if there are more key-values.
+     * A source doesn't have to guarantee any ordering or uniqueness of
+     * key-values. If the given visitor returns an error then the source may
+     * early-return with it, even if there are more key-values.
      *
      * # Implementation notes
      *
@@ -72,40 +78,52 @@ public fun Source.get(key: Key): Value? = getDefault(this, key)
 public fun Source.count(): Int = countDefault(this)
 
 /**
+ * The internal visitor used by [getDefault] to find the first value for a
+ * matching key. Promoted from an anonymous object so the upstream `Get`
+ * helper struct keeps a named counterpart in the Kotlin port.
+ */
+private class Get(
+    val target: Key,
+    var found: Value? = null,
+) : VisitSource {
+    override fun visitPair(key: Key, value: Value): Result<Unit> {
+        if (target == key) {
+            found = value
+        }
+        return Result.success(Unit)
+    }
+}
+
+/**
+ * The internal visitor used by [countDefault] to tally key-value pairs.
+ * Promoted from an anonymous object so the upstream `Count` helper struct
+ * keeps a named counterpart in the Kotlin port.
+ */
+private class Count(
+    var value: Int = 0,
+) : VisitSource {
+    override fun visitPair(key: Key, value: Value): Result<Unit> {
+        this.value += 1
+        return Result.success(Unit)
+    }
+}
+
+/**
  * The default implementation of [Source.get].
  */
 private fun getDefault(source: Source, key: Key): Value? {
-    val targetKey = key
-    var found: Value? = null
-    val visitor =
-        object : VisitSource {
-            override fun visitPair(key: Key, value: Value): Result<Unit> {
-                if (targetKey == key) {
-                    found = value
-                }
-                return Result.success(Unit)
-            }
-        }
-
-    source.visit(visitor)
-    return found
+    val get = Get(key)
+    source.visit(get)
+    return get.found
 }
 
 /**
  * The default implementation of [Source.count].
  */
 private fun countDefault(source: Source): Int {
-    var count = 0
-    val visitor =
-        object : VisitSource {
-            override fun visitPair(key: Key, value: Value): Result<Unit> {
-                count += 1
-                return Result.success(Unit)
-            }
-        }
-
-    source.visit(visitor)
-    return count
+    val count = Count()
+    source.visit(count)
+    return count.value
 }
 
 /**
@@ -117,6 +135,19 @@ public interface VisitSource {
      */
     public fun visitPair(key: Key, value: Value): Result<Unit>
 }
+
+/**
+ * Alias for [VisitSource] preserving the upstream legacy `Visitor` name. The
+ * upstream Rust crate keeps `pub use VisitSource as Visitor;` gated on the
+ * `kv_unstable` feature and marks it deprecated; the Kotlin counterpart is
+ * also deprecated.
+ */
+@Deprecated(
+    message = "Use VisitSource directly.",
+    replaceWith = ReplaceWith("VisitSource"),
+    level = DeprecationLevel.WARNING,
+)
+public typealias Visitor = VisitSource
 
 public fun <K, V> Pair<K, V>.asSource(): Source
     where
