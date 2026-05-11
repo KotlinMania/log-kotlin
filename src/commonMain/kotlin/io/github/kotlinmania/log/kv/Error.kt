@@ -2,13 +2,24 @@
 package io.github.kotlinmania.log.kv
 
 /**
+ * A typealias for the kind of error value that [Error.boxed] wraps.
+ *
+ * Upstream models this as a heap-allocated send/sync boxed standard error type
+ * inside its `std`-feature-gated support module. The Kotlin port uses
+ * [Throwable] directly: every Kotlin exception is reference-typed, all
+ * Kotlin/Native targets ship a single-threaded mutability model so
+ * send/sync bounds collapse, and there is no equivalent boxing wrapper.
+ */
+internal typealias BoxedError = Throwable
+
+/**
  * An error encountered while working with structured data.
  */
 public class Error private constructor(
     private val inner: Inner,
 ) : Exception() {
     private sealed interface Inner {
-        data class Boxed(val err: Throwable) : Inner
+        data class Boxed(val err: BoxedError) : Inner
 
         data class Value(val err: Error) : Inner
 
@@ -34,19 +45,33 @@ public class Error private constructor(
             return Error(Inner.Boxed(err))
         }
 
+        /**
+         * Equivalent of upstream's `From<io::Error>` conversion. In Kotlin
+         * any [Throwable] reaches this entry point, so the conversion is
+         * just an alias for [boxed].
+         */
         public fun from(err: Throwable): Error {
             return boxed(err)
         }
 
+        /**
+         * Equivalent of upstream's `From<fmt::Error>` conversion. Kotlin has
+         * no separate formatting-error type, so a no-arg factory is used to
+         * construct the Fmt variant.
+         */
         public fun fromFormat(): Error {
             return Error(Inner.Fmt)
         }
 
+        // Not public so the value-inner error machinery is not leaked across the
+        // package boundary.
         internal fun fromValue(err: Error): Error {
             return Error(Inner.Value(err))
         }
     }
 
+    // Not public so the value-inner error machinery is not leaked across the
+    // package boundary.
     internal fun intoValue(): Error {
         return when (val currentInner = inner) {
             is Inner.Value -> currentInner.err
@@ -54,6 +79,10 @@ public class Error private constructor(
         }
     }
 
+    /**
+     * Format the error as a string. Kotlin equivalent of upstream's
+     * `Display::fmt` implementation; delegates to [toString].
+     */
     public fun fmt(): String {
         return toString()
     }
