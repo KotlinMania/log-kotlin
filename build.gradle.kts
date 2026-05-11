@@ -169,7 +169,7 @@ mavenPublishing {
 
     pom {
         name.set("log-kotlin")
-        description.set("Kotlin Multiplatform port of rust-lang/lo - A lightweight logging facade for Rust")
+        description.set("Kotlin Multiplatform port of rust-lang/log — a lightweight logging facade.")
         inceptionYear.set("2026")
         url.set("https://github.com/KotlinMania/log-kotlin")
 
@@ -177,6 +177,11 @@ mavenPublishing {
             license {
                 name.set("MIT")
                 url.set("https://opensource.org/licenses/MIT")
+                distribution.set("repo")
+            }
+            license {
+                name.set("Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0")
                 distribution.set("repo")
             }
         }
