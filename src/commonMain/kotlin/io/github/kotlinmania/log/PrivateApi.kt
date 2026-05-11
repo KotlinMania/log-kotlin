@@ -3,6 +3,7 @@ package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.Key
 import io.github.kotlinmania.log.kv.Source
+import io.github.kotlinmania.log.kv.Value
 
 /**
  * WARNING: this is not part of the crate's public API and is subject to change at any time.
@@ -22,9 +23,6 @@ public fun modulePath(): String {
 public fun stringify(value: Any?): String {
     return value.toString()
 }
-
-// In this Kotlin port, structured key-values are always represented using `kv.Value`.
-public typealias Value = io.github.kotlinmania.log.kv.Value
 
 // Types for the `kv` argument.
 
