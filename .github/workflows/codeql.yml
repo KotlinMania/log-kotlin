@@ -71,8 +71,17 @@ jobs:
         # plugin). That's what CodeQL's Kotlin extractor's LD_PRELOAD tracer
         # can hook.
         #
-        # `--rerun-tasks` defeats Gradle's up-to-date check and any restored
-        # build cache from setup-gradle, ensuring kotlinc is actually invoked.
+        # `--rerun-tasks` defeats Gradle's up-to-date check, ensuring the
+        # compileAndroidMain task is scheduled for execution rather than
+        # marked UP-TO-DATE.
+        #
+        # `--no-build-cache` disables Gradle's build cache so previously-
+        # compiled `.class` outputs cannot be restored from cache without
+        # running kotlinc. `--rerun-tasks` alone forces the task to execute,
+        # but a build-cache hit can still substitute outputs without invoking
+        # the compiler; `--no-build-cache` closes that hole and is what the
+        # tracer needs to see a fresh kotlinc process. Verified-working form
+        # per starlark-syntax-kotlin PR #30.
         #
         # `kotlin.compiler.execution.strategy=out-of-process` spawns a fresh
         # kotlinc JVM per compilation (instead of the long-lived `daemon`
@@ -82,8 +91,8 @@ jobs:
         run: |
           ./gradlew compileAndroidMain \
             --rerun-tasks \
+            --no-build-cache \
             -Pkotlin.compiler.execution.strategy=out-of-process \
-            --no-configuration-cache \
             --no-daemon
 
       - name: Perform CodeQL Analysis
