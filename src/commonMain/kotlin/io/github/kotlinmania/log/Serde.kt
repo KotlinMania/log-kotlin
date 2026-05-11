@@ -8,7 +8,8 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-// The Deserialize implementations are handwritten to be case-insensitive using FromStr.
+// The deserializers are handwritten so the level/filter names are accepted case-insensitively
+// by routing through Level.fromStr / LevelFilter.fromStr.
 
 public object LevelSerializer : KSerializer<Level> {
     override val descriptor: SerialDescriptor =

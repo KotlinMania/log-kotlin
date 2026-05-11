@@ -6,7 +6,7 @@ import io.github.kotlinmania.log.kv.Source
 import io.github.kotlinmania.log.kv.Value
 
 /**
- * WARNING: this is not part of the crate's public API and is subject to change at any time.
+ * WARNING: this is not part of the public API and is subject to change at any time.
  */
 
 
@@ -15,8 +15,6 @@ public fun formatArgs(format: String, vararg args: Any?): Arguments {
 }
 
 public fun modulePath(): String {
-    // Kotlin has no direct equivalent of the upstream module-path macro.
-    // This is best-effort and intentionally lightweight.
     return "<module-path>"
 }
 
@@ -110,8 +108,6 @@ public fun <L : Log> enabled(logger: L, level: Level, target: String): Boolean {
 public fun loc(): Location {
     return Location.caller()
 }
-
-// In this Kotlin port, these helpers are always available.
 
 public fun <V : io.github.kotlinmania.log.kv.ToValue> captureToValue(v: V): Value {
     return v.toValue()

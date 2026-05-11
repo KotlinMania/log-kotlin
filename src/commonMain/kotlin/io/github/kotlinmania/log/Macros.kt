@@ -263,7 +263,7 @@ public fun logEnabled(level: Level, target: String, logger: Log): Boolean {
 
 public val __logGlobalLogger: GlobalLogger = GlobalLogger()
 
-// Helpers for building structured key-values in Kotlin call sites.
+// Helpers for building structured key-values.
 
 public fun kv(key: String, value: Value): Pair<String, Value> = Pair(key, value)
 
