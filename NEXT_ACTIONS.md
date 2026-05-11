@@ -6,8 +6,8 @@ Based on AST analysis, here are the concrete next steps.
 
 - **Files Present:** 9/9 (100.0%)
 - **Function parity:** 102/200 matched (target 239) — 51.0%
-- **Class/type parity:** 21/40 matched (target 49) — 52.5%
-- **Combined symbol parity:** 123/240 matched (target 288) — 51.2%
+- **Class/type parity:** 19/40 matched (target 47) — 47.5%
+- **Combined symbol parity:** 121/240 matched (target 286) — 50.4%
 - **Average inline-code cosine:** 0.35 (function body across 8 matched files)
 - **Average documentation cosine:** 0.77 (doc text across 8 matched files)
 - **Cheat-zeroed Files:** 2
@@ -32,11 +32,11 @@ Every matched file is listed below with function and type symbol parity.
 - **Target:** `kv.Error`
 - **Similarity:** 0.60
 - **Dependents:** 3
-- **Priority Score:** 3000904.0
+- **Priority Score:** 3010904.0
 - **Functions:** 6/6 matched (target 8)
 - **Missing functions:** _none_
-- **Types:** 3/3 matched (target 7)
-- **Missing types:** _none_
+- **Types:** 2/3 matched (target 6)
+- **Missing types:** `BoxedError`
 
 ### 2. kv.value
 
@@ -103,13 +103,13 @@ Every matched file is listed below with function and type symbol parity.
 ### 7. __private_api
 
 - **Target:** `log.PrivateApi`
-- **Similarity:** 0.84
+- **Similarity:** 0.83
 - **Dependents:** 0
-- **Priority Score:** 1501.6
+- **Priority Score:** 11501.7
 - **Functions:** 12/12 matched (target 19)
 - **Missing functions:** _none_
-- **Types:** 3/3 matched (target 5)
-- **Missing types:** _none_
+- **Types:** 2/3 matched (target 4)
+- **Missing types:** `Value`
 
 ### 8. kv.mod
 
