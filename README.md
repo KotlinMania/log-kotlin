@@ -47,7 +47,7 @@ See [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md) for translator discipline,
 
 ### License
 
-This Kotlin port is distributed under the same MIT license as the upstream [`rust-lang/log`](https://github.com/rust-lang/log). See [LICENSE](LICENSE) (and any sibling `LICENSE-*` / `NOTICE` files mirrored from upstream) for the full text.
+This Kotlin port is dual-licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT), at your option, matching the upstream [`rust-lang/log`](https://github.com/rust-lang/log) license terms.
 
 Original work copyrighted by the `log` crate authors.  
 Kotlin port: Copyright (c) 2026 Sydney Renee and The Solace Project.
