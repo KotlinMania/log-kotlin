@@ -134,5 +134,12 @@ package io.github.kotlinmania.log.kv
  * // kotlin.test.assertEquals("Data(a=1, b=true, c=Some data)", a.toString())
  * ```
  */
-// pub use self::source::Visitor;
+// Tracking file for the upstream module aggregator. The upstream visitor type, exposed at
+// the package root by an upstream re-export under the name [Visitor], is provided in this
+// package by [VisitSource]. Callers in other modules reference [VisitSource] directly, or
+// alias it with `import io.github.kotlinmania.log.kv.VisitSource as Visitor` when an
+// upstream-shaped spelling is required.
+//
 // Callers migrated:
+//   (none — workspace audit confirmed zero Kotlin callers held a direct or wildcard import
+//    of the re-exported identifier at the time this ledger was opened.)
