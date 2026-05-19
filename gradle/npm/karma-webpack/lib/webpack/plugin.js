@@ -19,7 +19,7 @@ class KW_WebpackPlugin {
           compiler.options.output.path,
           webpackFileObj.name
         );
-        this.controller.bundlesContent[webpackFileObj.name] = fs.readFileSync(
+        this.controller.bundlesContent[webpackFileObj.name] = fs.readFileLogc(
           filePath,
           'utf-8'
         );
