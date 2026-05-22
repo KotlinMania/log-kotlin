@@ -150,8 +150,9 @@ public class Value internal constructor(
         }
 
         /**
-         * Equivalent of upstream's `From<&str> for Value` conversion;
-         * delegates to the [String.toValue] extension. Provided so callers
+         * Construct a value from a string. In the upstream Rust implementation,
+         * this corresponds to a From trait implementation for string references.
+         * Delegates to the [String.toValue] extension. Provided so callers
          * may write `Value.from(s)` interchangeably with `s.toValue()`.
          */
         public fun from(value: String): Value = value.toValue()
@@ -286,9 +287,9 @@ public class Value internal constructor(
 
 /**
  * Alias for [VisitValue] preserving the upstream legacy `Visit` name. The
- * upstream Rust crate keeps `pub use VisitValue as Visit;` gated on the
- * `kv_unstable` feature and marks it deprecated; the Kotlin counterpart is
- * also deprecated.
+ * upstream Rust crate re-exports VisitValue under the name Visit when the
+ * kv_unstable feature is enabled, and marks it deprecated; the Kotlin
+ * counterpart is also deprecated.
  */
 @Deprecated(
     message = "Use VisitValue directly.",

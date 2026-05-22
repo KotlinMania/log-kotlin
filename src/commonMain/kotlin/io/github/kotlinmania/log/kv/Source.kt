@@ -138,9 +138,9 @@ public interface VisitSource {
 
 /**
  * Alias for [VisitSource] preserving the upstream legacy `Visitor` name. The
- * upstream Rust crate keeps `pub use VisitSource as Visitor;` gated on the
- * `kv_unstable` feature and marks it deprecated; the Kotlin counterpart is
- * also deprecated.
+ * upstream Rust crate re-exports VisitSource under the name Visitor when the
+ * kv_unstable feature is enabled, and marks it deprecated; the Kotlin
+ * counterpart is also deprecated.
  */
 @Deprecated(
     message = "Use VisitSource directly.",
