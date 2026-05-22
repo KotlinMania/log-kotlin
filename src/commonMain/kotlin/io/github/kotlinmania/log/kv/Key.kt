@@ -1,6 +1,8 @@
 // port-lint: source kv/key.rs
 package io.github.kotlinmania.log.kv
 
+import io.github.kotlinmania.serde.core.ser.serialize
+
 // Structured keys.
 //
 // # Serialization support
@@ -89,6 +91,16 @@ public class Key private constructor(
      * Format the key as a string. Delegates to [toString].
      */
     public fun fmt(): String = toString()
+
+    /**
+     * Serialize this key using serde.
+     *
+     * The key is serialized as its underlying string value.
+     */
+    public fun <Ok, E> serialize(serializer: io.github.kotlinmania.serde.core.ser.Serializer<Ok, E>): Result<Ok>
+            where E : io.github.kotlinmania.serde.core.ser.Error {
+        return key.serialize(serializer)
+    }
 
     override fun compareTo(other: Key): Int = key.compareTo(other.key)
 

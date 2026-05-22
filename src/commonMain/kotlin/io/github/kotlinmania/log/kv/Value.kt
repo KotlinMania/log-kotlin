@@ -1,6 +1,8 @@
 // port-lint: source kv/value.rs
 package io.github.kotlinmania.log.kv
 
+import io.github.kotlinmania.serde.core.ser.serialize
+
 // Structured values.
 //
 // # Serialization support
@@ -117,7 +119,7 @@ public class Value internal constructor(
         /**
          * Get a value from a type implementing serde serialization.
          */
-        public fun fromSerde(value: Any?): Value {
+        public fun fromSerde(value: io.github.kotlinmania.serde.core.ser.Serialize): Value {
             return Value(ValueInner.Inner.fromSerde(value))
         }
 
@@ -196,7 +198,7 @@ public class Value internal constructor(
         /**
          * Get a value from a type implementing serde serialization.
          */
-        public fun captureSerde(value: Any?): Value {
+        public fun captureSerde(value: io.github.kotlinmania.serde.core.ser.Serialize): Value {
             return fromSerde(value)
         }
 
@@ -296,6 +298,16 @@ public class Value internal constructor(
         level = DeprecationLevel.WARNING,
     )
     public fun downcastRef(): Any? = null
+
+    /**
+     * Serialize this value using serde.
+     *
+     * Delegates to the underlying value's serialize implementation.
+     */
+    public fun <Ok, E> serialize(serializer: io.github.kotlinmania.serde.core.ser.Serializer<Ok, E>): Result<Ok>
+            where E : io.github.kotlinmania.serde.core.ser.Error {
+        return ValueInner.serializeInner(inner, serializer)
+    }
 
     public override fun toString(): String = ValueInner.formatDisplay(inner)
 }
@@ -417,7 +429,7 @@ internal object ValueInner {
 
         data class ErrorValue(val value: Throwable) : Inner
 
-        data class Serde(val value: Any?) : Inner
+        data class Serde(val value: io.github.kotlinmania.serde.core.ser.Serialize) : Inner
 
         data class Sval(val value: Any?) : Inner
 
@@ -426,7 +438,7 @@ internal object ValueInner {
 
             fun fromDisplay(value: Any?): Inner = Display(value)
 
-            fun fromSerde(value: Any?): Inner = Serde(value)
+            fun fromSerde(value: io.github.kotlinmania.serde.core.ser.Serialize): Inner = Serde(value)
 
             fun fromSval(value: Any?): Inner = Sval(value)
 
@@ -552,6 +564,49 @@ internal object ValueInner {
             is Inner.ErrorValue -> visitor.visitBorrowedError(inner.value)
             is Inner.Serde -> visitor.visitAny(Value.fromSerde(inner.value))
             is Inner.Sval -> visitor.visitAny(Value.fromSval(inner.value))
+        }
+    }
+
+    fun <Ok, E> serializeInner(inner: Inner, serializer: io.github.kotlinmania.serde.core.ser.Serializer<Ok, E>): Result<Ok>
+            where E : io.github.kotlinmania.serde.core.ser.Error {
+        return when (inner) {
+            Inner.None -> serializer.serializeNone()
+            is Inner.Bool -> inner.value.serialize(serializer)
+            is Inner.Str -> inner.value.serialize(serializer)
+            is Inner.CharValue -> inner.value.serialize(serializer)
+            is Inner.I64 -> inner.value.serialize(serializer)
+            is Inner.U64 -> inner.value.serialize(serializer)
+            is Inner.F64 -> inner.value.serialize(serializer)
+            is Inner.I128 -> {
+                // i128 doesn't have a built-in Serialize implementation
+                // Serialize as a string representation
+                serializer.serializeStr(inner.value.toString())
+            }
+            is Inner.U128 -> {
+                // u128 doesn't have a built-in Serialize implementation
+                // Serialize as a string representation
+                serializer.serializeStr(inner.value.toString())
+            }
+            is Inner.Debug -> {
+                // Serialize debug values as their string representation
+                serializer.serializeStr(inner.value.toString())
+            }
+            is Inner.Display -> {
+                // Serialize display values as their string representation
+                serializer.serializeStr(inner.value.toString())
+            }
+            is Inner.ErrorValue -> {
+                // Serialize errors as their string representation
+                serializer.serializeStr(inner.value.toString())
+            }
+            is Inner.Serde -> {
+                // Delegate to the stored value's serialize implementation
+                inner.value.serialize(serializer)
+            }
+            is Inner.Sval -> {
+                // sval is not supported - serialize as string representation
+                serializer.serializeStr(inner.value.toString())
+            }
         }
     }
 
