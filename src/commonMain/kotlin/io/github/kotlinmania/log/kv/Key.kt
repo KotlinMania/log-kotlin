@@ -2,6 +2,21 @@
 package io.github.kotlinmania.log.kv
 
 // Structured keys.
+//
+// # Serialization support
+//
+// The upstream Rust implementation provides optional sval and serde serialization
+// support through feature-gated `stream`, `stream_ref`, and `serialize` methods.
+// These features require the `kv_sval` and `kv_serde` Cargo features respectively.
+//
+// The Kotlin port does not currently provide direct equivalents of these
+// serialization methods because:
+// - sval has no Kotlin Multiplatform equivalent
+// - serde support is being developed separately as serde-kotlin
+//
+// When serde-kotlin becomes available and is integrated into this port, the
+// serialize method will be added. The sval-based methods will remain unported
+// unless a KMP-compatible sval alternative emerges.
 
 /**
  * A type that can be converted into a [Key].

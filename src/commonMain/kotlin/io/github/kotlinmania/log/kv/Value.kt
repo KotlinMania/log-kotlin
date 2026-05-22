@@ -1,6 +1,24 @@
 // port-lint: source kv/value.rs
 package io.github.kotlinmania.log.kv
 
+// Structured values.
+//
+// # Serialization support
+//
+// The upstream Rust implementation provides optional sval and serde serialization
+// support through feature-gated `from_sval`, `from_serde`, and related methods.
+// The Value type can also be serialized through sval::Value and serde::Serialize
+// trait implementations when the `kv_sval` and `kv_serde` Cargo features are enabled.
+//
+// The Kotlin port provides stub implementations of fromSval, fromSerde, captureSval,
+// and captureSerde for API compatibility, but these methods do not perform actual
+// serialization because:
+// - sval has no Kotlin Multiplatform equivalent
+// - serde support is being developed separately as serde-kotlin
+//
+// When serde-kotlin becomes available and is integrated into this port, these
+// methods will perform actual serialization. The sval-based methods will remain
+// stubs unless a KMP-compatible sval alternative emerges.
 
 /**
  * A type that can be converted into a [Value].
