@@ -16,25 +16,23 @@ public fun interface ToKey {
 /**
  * A key in a key-value.
  *
- * These impls must only be based on the [asStr] representation of the key.
- * If a new field (such as an optional index) is added to the key they must not
- * affect comparison.
+ * Equality, ordering, and hashing on [Key] must only consider the
+ * [asStr] representation of the key. If new fields (such as an optional
+ * index) are ever added to [Key] they must not affect comparison.
  */
 public class Key private constructor(
     private val key: String,
 ) : ToKey, Comparable<Key> {
     public companion object {
         /**
-         * Get a key from a borrowed string.
+         * Get a key from a string.
          */
         public fun fromStr(key: String): Key {
             return Key(key)
         }
 
         /**
-         * Equivalent of upstream's `From<&str>` conversion; delegates to
-         * [fromStr] so callers may write `Key.from(s)` or `Key.fromStr(s)`
-         * interchangeably.
+         * Build a [Key] from a string. Delegates to [fromStr].
          */
         public fun from(s: String): Key {
             return fromStr(s)
@@ -42,47 +40,40 @@ public class Key private constructor(
     }
 
     /**
-     * Get a borrowed string from this key.
-     *
-     * The lifetime of the returned string is bound to the borrow of `this`
-     * rather than to the original construction site, mirroring the
-     * `as_str(&self) -> &str` shape upstream.
+     * Get the string content of this key.
      */
     public fun asStr(): String = key
 
     /**
      * Try to get the string originally supplied to this key.
      *
-     * If the key is a borrow of a longer-lived string, this method will
-     * return that string. If the key is internally buffered, this method will
-     * return `null`. Today the Kotlin port always stores the original string
-     * by reference, so the result is always non-null; the option-shaped
-     * signature is preserved so the contract stays compatible when internal
-     * buffering is added later.
+     * If the key was constructed by borrowing a longer-lived string, this
+     * method returns that string. If the key is internally buffered, this
+     * method returns `null`. The Kotlin port always stores the original
+     * string by reference, so the result is currently always non-null; the
+     * nullable return shape is preserved so the contract stays compatible
+     * when internal buffering is added later.
      */
     public fun toBorrowedStr(): String? {
         return key
     }
 
     /**
-     * Equivalent of upstream's `AsRef<str>::as_ref` conversion; returns the
-     * underlying string. Provided for naming parity with the upstream trait
-     * impl.
+     * Return the underlying string. Mirrors a string-reference view of the
+     * key.
      */
     public fun asRef(): String = asStr()
 
     /**
-     * Equivalent of upstream's `Borrow<str>::borrow` conversion; returns the
-     * underlying string. Provided for naming parity with the upstream trait
-     * impl.
+     * Return the underlying string. Mirrors a string-reference view of the
+     * key.
      */
     public fun borrow(): String = asStr()
 
     override fun toKey(): Key = Key(key)
 
     /**
-     * Format the key as a string. Kotlin equivalent of upstream's
-     * `Display::fmt` implementation; delegates to [toString].
+     * Format the key as a string. Delegates to [toString].
      */
     public fun fmt(): String = toString()
 
@@ -96,8 +87,7 @@ public class Key private constructor(
 }
 
 /**
- * Equivalent of upstream's `impl ToKey for str` (and `impl ToKey for String`
- * inside the `std` support module). Any Kotlin [String] can be promoted into
- * a [Key] by calling `toKey()` on it.
+ * Promote any [String] into a [Key]. Provides the [ToKey] conversion for
+ * strings.
  */
 public fun String.toKey(): Key = Key.fromStr(this)
