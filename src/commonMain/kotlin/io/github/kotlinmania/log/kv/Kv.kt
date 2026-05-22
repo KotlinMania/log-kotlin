@@ -96,12 +96,12 @@ package io.github.kotlinmania.log.kv
  * //         return Result.success(Unit)
  * //     }
  * //
- * //     override fun visitU128(value: com.ionspin.kotlin.bignum.integer.BigInteger): Result<Unit> {
+ * //     override fun visitU128(value: UInt128): Result<Unit> {
  * //         isNumeric = true
  * //         return Result.success(Unit)
  * //     }
  * //
- * //     override fun visitI128(value: com.ionspin.kotlin.bignum.integer.BigInteger): Result<Unit> {
+ * //     override fun visitI128(value: Int128): Result<Unit> {
  * //         isNumeric = true
  * //         return Result.success(Unit)
  * //     }

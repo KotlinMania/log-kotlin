@@ -105,9 +105,30 @@ For files that have no single Rust counterpart (re-homed from a `mod.rs`, or pur
 ./gradlew test
 ```
 
-Targets: macOS arm64/x64, Linux x64, mingw-x64, iOS arm64/x64/simulator-arm64, JS, Wasm-JS, Android.
+`./gradlew build` compiles and links every configured target — that
+contract is wired explicitly in `build.gradle.kts` via the
+`fullTargetBuildTaskNames` block. `./gradlew test` is the host-portable
+subset (macOS + JVM + JS + WasmJS + Android unit); non-host native tests
+only run on their own host.
 
-There is no JVM-only target. `./gradlew jvmTest` is **not** valid.
+Targets follow the kotlinmania normalized template:
+
+- **Apple native:** `macosArm64`, `iosArm64`, `iosSimulatorArm64`, `iosX64`,
+  `tvosArm64`, `tvosSimulatorArm64`, `watchosArm32`, `watchosArm64`,
+  `watchosDeviceArm64`, `watchosSimulatorArm64`, plus the `Log` XCFramework.
+- **Other native:** `linuxX64`, `linuxArm64`, `mingwX64`,
+  `androidNativeArm32`/`Arm64`/`X86`/`X64`.
+- **Web / JVM:** `js` (browser + Node), `wasmJs` (browser + Node), `wasmWasi`
+  (Node), `jvm`, Android KMP library (main + host-test + device-test),
+  `swiftExport`.
+
+The `kv` u128 / i128 surface uses repo-local `UInt128` / `Int128` types
+(see [Int128.kt](src/commonMain/kotlin/io/github/kotlinmania/log/kv/Int128.kt))
+rather than `com.ionspin.kotlin:bignum`. bignum 0.3.10 declares
+`watchos_device_arm64` in its module metadata but does not publish the
+matching artifact, which made `watchosDeviceArm64` unbuildable. The
+hand-rolled fixed-width 128-bit integers cover the operations the upstream
+Rust `u128`/`i128` surface needs and work uniformly on every target.
 
 ## Forbidden
 

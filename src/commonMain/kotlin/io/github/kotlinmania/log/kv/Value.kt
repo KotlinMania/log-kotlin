@@ -1,7 +1,6 @@
 // port-lint: source kv/value.rs
 package io.github.kotlinmania.log.kv
 
-import com.ionspin.kotlin.bignum.integer.BigInteger
 
 /**
  * A type that can be converted into a [Value].
@@ -213,14 +212,14 @@ public class Value internal constructor(
     public fun toI64(): Long? = inner.toI64()
 
     /**
-     * Try convert this value into a big unsigned integer.
+     * Try convert this value into a 128-bit unsigned integer.
      */
-    public fun toU128(): BigInteger? = inner.toU128()
+    public fun toU128(): UInt128? = inner.toU128()
 
     /**
-     * Try convert this value into a big signed integer.
+     * Try convert this value into a 128-bit signed integer.
      */
-    public fun toI128(): BigInteger? = inner.toI128()
+    public fun toI128(): Int128? = inner.toI128()
 
     /**
      * Try convert this value into a `Double`.
@@ -331,14 +330,14 @@ public interface VisitValue {
     public fun visitI64(value: Long): Result<Unit> = visitAny(value.toValue())
 
     /**
-     * Visit a big unsigned integer.
+     * Visit a 128-bit unsigned integer.
      */
-    public fun visitU128(value: BigInteger): Result<Unit> = visitAny(value.toU128Value())
+    public fun visitU128(value: UInt128): Result<Unit> = visitAny(value.toU128Value())
 
     /**
-     * Visit a big signed integer.
+     * Visit a 128-bit signed integer.
      */
-    public fun visitI128(value: BigInteger): Result<Unit> = visitAny(value.toI128Value())
+    public fun visitI128(value: Int128): Result<Unit> = visitAny(value.toI128Value())
 
     /**
      * Visit a floating point.
@@ -392,9 +391,9 @@ internal object ValueInner {
 
         data class F64(val value: Double) : Inner
 
-        data class I128(val value: BigInteger) : Inner
+        data class I128(val value: Int128) : Inner
 
-        data class U128(val value: BigInteger) : Inner
+        data class U128(val value: UInt128) : Inner
 
         data class Debug(val value: Any?) : Inner
 
@@ -446,11 +445,11 @@ internal object ValueInner {
                     if (uintValue.toULong() != value) null else uintValue.toDouble()
                 }
                 is I128 -> {
-                    val intValue = tryToInt(value)
+                    val intValue = value.toInt()
                     if (intValue == null) null else intValue.toDouble()
                 }
                 is U128 -> {
-                    val uintValue = tryToUInt(value)
+                    val uintValue = value.toUInt()
                     if (uintValue == null) null else uintValue.toDouble()
                 }
                 else -> null
@@ -460,8 +459,8 @@ internal object ValueInner {
             when (this) {
                 is I64 -> value
                 is U64 -> value.toLong().takeIf { it >= 0 && it.toULong() == value }
-                is I128 -> tryToLong(value)
-                is U128 -> tryToULong(value)?.toLong()
+                is I128 -> value.toLong()
+                is U128 -> value.toULong()?.toLong()?.takeIf { it >= 0 }
                 else -> null
             }
 
@@ -469,26 +468,26 @@ internal object ValueInner {
             when (this) {
                 is U64 -> value
                 is I64 -> value.toULong().takeIf { value >= 0 && it.toLong() == value }
-                is I128 -> tryToLong(value)?.toULong()
-                is U128 -> tryToULong(value)
+                is I128 -> value.toLong()?.takeIf { it >= 0 }?.toULong()
+                is U128 -> value.toULong()
                 else -> null
             }
 
-        fun toU128(): BigInteger? =
+        fun toU128(): UInt128? =
             when (this) {
                 is U128 -> value
-                is I64 -> if (value >= 0) BigInteger.fromLong(value) else null
-                is U64 -> BigInteger.fromULong(value)
-                is I128 -> if (value >= BigInteger.ZERO) value else null
+                is I64 -> if (value >= 0) UInt128.fromLong(value) else null
+                is U64 -> UInt128.fromULong(value)
+                is I128 -> if (value >= Int128.ZERO) UInt128(value.hi, value.lo) else null
                 else -> null
             }
 
-        fun toI128(): BigInteger? =
+        fun toI128(): Int128? =
             when (this) {
                 is I128 -> value
-                is I64 -> BigInteger.fromLong(value)
-                is U64 -> BigInteger.fromULong(value)
-                is U128 -> value
+                is I64 -> Int128.fromLong(value)
+                is U64 -> Int128.fromULong(value)
+                is U128 -> if (value.hi and (1uL shl 63) == 0uL) Int128(value.hi, value.lo) else null
                 else -> null
             }
 
@@ -540,31 +539,6 @@ internal object ValueInner {
         }
     }
 
-    private fun tryToLong(value: BigInteger): Long? {
-        val stringValue = value.toString()
-        val longValue = stringValue.toLongOrNull() ?: return null
-        return if (BigInteger.fromLong(longValue) == value) longValue else null
-    }
-
-    private fun tryToULong(value: BigInteger): ULong? {
-        if (value < BigInteger.ZERO) return null
-        val stringValue = value.toString()
-        val uLongValue = stringValue.toULongOrNull() ?: return null
-        return if (BigInteger.fromULong(uLongValue) == value) uLongValue else null
-    }
-
-    private fun tryToInt(value: BigInteger): Int? {
-        val stringValue = value.toString()
-        val intValue = stringValue.toIntOrNull() ?: return null
-        return if (BigInteger.fromInt(intValue) == value) intValue else null
-    }
-
-    private fun tryToUInt(value: BigInteger): UInt? {
-        if (value < BigInteger.ZERO) return null
-        val stringValue = value.toString()
-        val uIntValue = stringValue.toUIntOrNull() ?: return null
-        return if (BigInteger.fromUInt(uIntValue) == value) uIntValue else null
-    }
 }
 
 public fun String.toValue(): Value = Value.fromInner(ValueInner.Inner.Str(this))
@@ -593,8 +567,8 @@ public fun UShort.toValue(): Value = this.toULong().toValue()
 
 public fun UByte.toValue(): Value = this.toULong().toValue()
 
-public fun BigInteger.toI128Value(): Value = Value.fromInner(ValueInner.Inner.I128(this))
+public fun Int128.toI128Value(): Value = Value.fromInner(ValueInner.Inner.I128(this))
 
-public fun BigInteger.toU128Value(): Value = Value.fromInner(ValueInner.Inner.U128(this))
+public fun UInt128.toU128Value(): Value = Value.fromInner(ValueInner.Inner.U128(this))
 
 public fun <T> T?.toValue(toValue: (T) -> Value): Value = if (this == null) Value.nullValue() else toValue(this)
