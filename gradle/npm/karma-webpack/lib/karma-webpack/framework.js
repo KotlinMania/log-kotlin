@@ -8,13 +8,13 @@ function KW_Framework(config) {
   const runtimePath = path.join(controller.outputPath, 'runtime.js');
 
   // make sure tmp folder exists
-  if (!fs.existsLogc(controller.outputPath)) {
-    fs.mkdirLogc(controller.outputPath);
+  if (!fs.existsSync(controller.outputPath)) {
+    fs.mkdirSync(controller.outputPath);
   }
 
   // create dummy files for commons.js and runtime.js so they get included by karma
-  fs.closeLogc(fs.openLogc(commonsPath, 'w'));
-  fs.closeLogc(fs.openLogc(runtimePath, 'w'));
+  fs.closeSync(fs.openSync(commonsPath, 'w'));
+  fs.closeSync(fs.openSync(runtimePath, 'w'));
 
   // register for karma
   config.files.unshift({
