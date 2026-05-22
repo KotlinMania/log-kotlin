@@ -10,15 +10,12 @@ package io.github.kotlinmania.log.kv
 // The Value type can also be serialized through sval::Value and serde::Serialize
 // trait implementations when the `kv_sval` and `kv_serde` Cargo features are enabled.
 //
-// The Kotlin port provides stub implementations of fromSval, fromSerde, captureSval,
-// and captureSerde for API compatibility, but these methods do not perform actual
-// serialization because:
-// - sval has no Kotlin Multiplatform equivalent
-// - serde support is being developed separately as serde-kotlin
+// The Kotlin port provides serde serialization support through serde-kotlin when
+// that dependency is available. The methods `fromSerde`, `captureSerde`, and the
+// `Serialize` implementation delegate to serde-kotlin.
 //
-// When serde-kotlin becomes available and is integrated into this port, these
-// methods will perform actual serialization. The sval-based methods will remain
-// stubs unless a KMP-compatible sval alternative emerges.
+// The sval-based methods (`fromSval`, `captureSval`, and sval trait implementations)
+// are not ported because sval has no Kotlin Multiplatform equivalent.
 
 /**
  * A type that can be converted into a [Value].

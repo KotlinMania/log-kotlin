@@ -9,14 +9,12 @@ package io.github.kotlinmania.log.kv
 // support through feature-gated `stream`, `stream_ref`, and `serialize` methods.
 // These features require the `kv_sval` and `kv_serde` Cargo features respectively.
 //
-// The Kotlin port does not currently provide direct equivalents of these
-// serialization methods because:
-// - sval has no Kotlin Multiplatform equivalent
-// - serde support is being developed separately as serde-kotlin
+// The Kotlin port provides serde serialization support through serde-kotlin when
+// that dependency is available. The `serialize` method delegates to serde-kotlin's
+// Serialize implementation for String.
 //
-// When serde-kotlin becomes available and is integrated into this port, the
-// serialize method will be added. The sval-based methods will remain unported
-// unless a KMP-compatible sval alternative emerges.
+// The sval-based methods (`stream` and `stream_ref`) are not ported because sval
+// has no Kotlin Multiplatform equivalent.
 
 /**
  * A type that can be converted into a [Key].
