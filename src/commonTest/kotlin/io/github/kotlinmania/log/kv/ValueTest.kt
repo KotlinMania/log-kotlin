@@ -12,10 +12,10 @@ import kotlin.test.assertNull
 // implementation's test fixtures and assertions.
 
 /**
- * Test-only token enum mirroring upstream's `inner::Token<'v>` discriminated
- * type. Used to assert the structural shape of a [Value] regardless of how
- * it was captured — see [toToken]. Kept inside the test source set so it
- * does not become part of the published API.
+ * Test-only token enum mirroring the upstream test token type used in the
+ * Rust implementation. Used to assert the structural shape of a [Value]
+ * regardless of how it was captured — see [toToken]. Kept inside the test
+ * source set so it does not become part of the published API.
  */
 internal sealed class Token {
     object None : Token() {
@@ -36,12 +36,13 @@ internal sealed class Token {
 }
 
 /**
- * Test-only structural projection equivalent to upstream's
- * `Inner::to_test_token`. Returns a [Token] matching the inner variant.
+ * Test-only structural projection returning a token matching the inner
+ * variant of a value. In the upstream Rust implementation, this corresponds
+ * to a to_test_token method on the Inner type.
  *
- * Upstream marks four arms (I128, U128, Debug, Display) as
- * `unimplemented!()` because no upstream test exercises them; the Kotlin
- * counterpart surfaces those as errors with the same intent.
+ * Upstream marks four arms (I128, U128, Debug, Display) as unimplemented
+ * because no upstream test exercises them; the Kotlin counterpart surfaces
+ * those as errors with the same intent.
  */
 internal fun Value.toToken(): Token =
     when (val i = inner) {
