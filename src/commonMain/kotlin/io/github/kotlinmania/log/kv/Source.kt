@@ -1,5 +1,9 @@
 // port-lint: source kv/source.rs
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 package io.github.kotlinmania.log.kv
+
+import kotlin.native.HiddenFromObjC
 
 // Sources for key-values.
 //
@@ -149,12 +153,25 @@ public interface VisitSource {
 )
 public typealias Visitor = VisitSource
 
+/**
+ * Hidden from Swift Export: a public `Pair<K, V>` receiver drags the
+ * `kotlin.Pair` stdlib bridge into the generated Swift module, where the
+ * unchecked-cast warnings on the `Pair` accessors fail `-Werror`. Kotlin
+ * callers continue to use `pair.asSource()` directly.
+ */
+@HiddenFromObjC
 public fun <K, V> Pair<K, V>.asSource(): Source
     where
         K : ToKey,
         V : ToValue =
     Source { visitor -> visitor.visitPair(first.toKey(), second.toValue()) }
 
+/**
+ * Hidden from Swift Export: a public generic `List<S>` receiver bridges
+ * `kotlin.collections.List` with unchecked-cast warnings that fail
+ * `-Werror`. Kotlin callers continue to use `list.asSource()` directly.
+ */
+@HiddenFromObjC
 public fun <S : Source> List<S>.asSource(): Source =
     Source { visitor ->
         for (source in this) {
@@ -163,6 +180,12 @@ public fun <S : Source> List<S>.asSource(): Source =
         Result.success(Unit)
     }
 
+/**
+ * Hidden from Swift Export: a public generic `Array<S>` receiver bridges
+ * the `kotlin.Array` stdlib surface and emits unchecked-cast warnings that
+ * fail `-Werror`. Kotlin callers continue to use `array.asSource()`.
+ */
+@HiddenFromObjC
 public fun <S : Source> Array<S>.asSource(): Source =
     Source { visitor ->
         for (source in this) {
@@ -171,6 +194,12 @@ public fun <S : Source> Array<S>.asSource(): Source =
         Result.success(Unit)
     }
 
+/**
+ * Hidden from Swift Export: a nullable generic receiver drags the
+ * stdlib generics bridge and emits unchecked-cast warnings that fail
+ * `-Werror`. Kotlin callers continue to use `nullable.asSource()`.
+ */
+@HiddenFromObjC
 public fun <S : Source> S?.asSource(): Source =
     Source { visitor ->
         val source = this ?: return@Source Result.success(Unit)

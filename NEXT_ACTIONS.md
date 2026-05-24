@@ -5,12 +5,12 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 9/9 (100.0%)
-- **Function parity:** 125/200 matched (target 289) — 62.5%
-- **Class/type parity:** 25/40 matched (target 60) — 62.5%
-- **Combined symbol parity:** 150/240 matched (target 349) — 62.5%
-- **Average inline-code cosine:** 0.31 (function body across 8 matched files)
+- **Function parity:** 125/200 matched (target 288) — 62.5%
+- **Class/type parity:** 24/40 matched (target 58) — 60.0%
+- **Combined symbol parity:** 149/240 matched (target 346) — 62.1%
+- **Average inline-code cosine:** 0.24 (function body across 8 matched files)
 - **Average documentation cosine:** 0.71 (doc text across 8 matched files)
-- **Cheat-zeroed Files:** 4
+- **Cheat-zeroed Files:** 5
 - **Critical Issues:** 8 files with <0.60 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
@@ -43,11 +43,11 @@ Every matched file is listed below with function and type symbol parity.
 - **Target:** `kv.Value [ZERO]`
 - **Similarity:** 0.00
 - **Dependents:** 2
-- **Priority Score:** 2167310.0
+- **Priority Score:** 2177310.0
 - **Functions:** 52/66 matched (target 101)
 - **Missing functions:** `null`, `serialize`, `stream`, `stream_ref`, `visit_empty`, `to_test_token`, `is`, `to_token`, `unsigned`, `signed`, `float`, `bool`, `str`, `char`
-- **Types:** 5/7 matched (target 22)
-- **Missing types:** `ToValue`, `InnerVisitValue`
+- **Types:** 4/7 matched (target 20)
+- **Missing types:** `ToValue`, `VisitValue`, `InnerVisitValue`
 - **Tests:** 9/17 matched
 
 ### 3. lib
@@ -90,11 +90,11 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 6. kv.key
 
-- **Target:** `kv.Key`
-- **Similarity:** 0.53
+- **Target:** `kv.Key [ZERO]`
+- **Similarity:** 0.00
 - **Dependents:** 0
-- **Priority Score:** 41504.7
-- **Functions:** 10/13 matched (target 15)
+- **Priority Score:** 41510.0
+- **Functions:** 10/13 matched (target 14)
 - **Missing functions:** `stream`, `stream_ref`, `serialize`
 - **Types:** 1/2 matched
 - **Missing types:** `ToKey`
@@ -103,9 +103,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 7. __private_api
 
 - **Target:** `log.PrivateApi`
-- **Similarity:** 0.83
+- **Similarity:** 0.81
 - **Dependents:** 0
-- **Priority Score:** 11501.7
+- **Priority Score:** 11501.9
 - **Functions:** 12/12 matched (target 19)
 - **Missing functions:** _none_
 - **Types:** 2/3 matched (target 4)

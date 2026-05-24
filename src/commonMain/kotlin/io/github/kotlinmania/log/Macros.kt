@@ -1,8 +1,11 @@
 // port-lint: source macros.rs
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.ToValue
 import io.github.kotlinmania.log.kv.Value
+import kotlin.native.HiddenFromObjC
 
 
 /**
@@ -115,6 +118,14 @@ public fun log(
     )
 }
 
+/**
+ * Hidden from Swift Export: a `vararg Pair<String, Value>` parameter
+ * bridges the `kotlin.Pair` and `kotlin.Array` stdlib surfaces, whose
+ * generated bridge files fail `-Werror` on unchecked casts. Kotlin
+ * callers use this overload normally; Swift callers should compose the
+ * key-values through a `Source` directly.
+ */
+@HiddenFromObjC
 public fun log(
     logger: Log,
     target: String,
@@ -261,14 +272,25 @@ public fun logEnabled(level: Level, target: String, logger: Log): Boolean {
     return lvl <= STATIC_MAX_LEVEL && lvl <= maxLevel() && enabled(logger, lvl, target)
 }
 
+@HiddenFromObjC
 public val __logGlobalLogger: GlobalLogger = GlobalLogger()
 
 // Helpers for building structured key-values.
+//
+// Each helper returns `Pair<String, Value>` because the macros above accept
+// `vararg Pair<String, Value>`. All four are hidden from Swift Export
+// because returning `kotlin.Pair` from a public function bridges the stdlib
+// `Pair` surface and triggers the `Array<Any?>` unchecked-cast warnings
+// that fail `-Werror` in the generated Swift module.
 
+@HiddenFromObjC
 public fun kv(key: String, value: Value): Pair<String, Value> = Pair(key, value)
 
+@HiddenFromObjC
 public fun kvToValue(key: String, value: ToValue): Pair<String, Value> = Pair(key, captureToValue(value))
 
+@HiddenFromObjC
 public fun kvDebug(key: String, value: Any?): Pair<String, Value> = Pair(key, captureDebug(value))
 
+@HiddenFromObjC
 public fun kvDisplay(key: String, value: Any?): Pair<String, Value> = Pair(key, captureDisplay(value))
