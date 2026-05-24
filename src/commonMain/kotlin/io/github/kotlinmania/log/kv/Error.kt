@@ -46,18 +46,20 @@ public class Error private constructor(
         }
 
         /**
-         * Equivalent of upstream's `From<io::Error>` conversion. In Kotlin
-         * any [Throwable] reaches this entry point, so the conversion is
-         * just an alias for [boxed].
+         * Create an error from a throwable. In the upstream Rust
+         * implementation, this corresponds to a From trait implementation
+         * for IO errors. In Kotlin, any [Throwable] reaches this entry
+         * point, so the conversion is just an alias for [boxed].
          */
         public fun from(err: Throwable): Error {
             return boxed(err)
         }
 
         /**
-         * Equivalent of upstream's `From<fmt::Error>` conversion. Kotlin has
-         * no separate formatting-error type, so a no-arg factory is used to
-         * construct the Fmt variant.
+         * Create a formatting error. In the upstream Rust implementation,
+         * this corresponds to a From trait implementation for formatting
+         * errors. Kotlin has no separate formatting-error type, so a
+         * no-arg factory is used to construct the Fmt variant.
          */
         public fun fromFormat(): Error {
             return Error(Inner.Fmt)
@@ -80,8 +82,9 @@ public class Error private constructor(
     }
 
     /**
-     * Format the error as a string. Kotlin equivalent of upstream's
-     * `Display::fmt` implementation; delegates to [toString].
+     * Format the error as a string. In the upstream Rust implementation,
+     * this corresponds to a Display trait implementation; it delegates to
+     * [toString].
      */
     public fun fmt(): String {
         return toString()

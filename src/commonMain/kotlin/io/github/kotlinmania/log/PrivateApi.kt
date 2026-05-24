@@ -129,6 +129,6 @@ public fun captureSval(v: Any?): Value {
     return Value.fromSval(v)
 }
 
-public fun captureSerde(v: Any?): Value {
+public fun captureSerde(v: io.github.kotlinmania.serde.core.ser.Serialize): Value {
     return Value.fromSerde(v)
 }
