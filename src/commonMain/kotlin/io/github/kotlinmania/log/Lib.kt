@@ -189,12 +189,21 @@ public enum class LevelFilter(
     ;
 
     /**
+     * Converts `this` to the equivalent [Level].
+     *
+     * Returns `null` if `this` is [LevelFilter.Off].
+     */
+    public fun toLevel(): Level? = Level.fromUsize(discriminant)
+
+    /**
      * Returns the string representation of the [LevelFilter].
+     *
+     * This returns the same string as the [toString] implementation.
      */
     public fun asStr(): String = LOG_LEVEL_NAMES[discriminant]
 
     /**
-     * Iterate through all supported logging level filters.
+     * Iterate through all supported filtering levels.
      *
      * The order of iteration is from less to more verbose filtering.
      */
