@@ -1,9 +1,12 @@
 // port-lint: source lib.rs
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 package io.github.kotlinmania.log
 
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.native.HiddenFromObjC
 
 /**
  * A lightweight logging facade.
@@ -612,12 +615,21 @@ public val STATIC_MAX_LEVEL: LevelFilter = LevelFilter.Trace
 
 /**
  * The type returned by [Level.fromStr] and [LevelFilter.fromStr] when the string doesn't match any of the log levels.
+ *
+ * Hidden from Swift Export: extending `kotlin.Exception` drags the
+ * `Throwable.stackTrace`/`Array<Any?>` bridge into the generated Swift module
+ * and that bridge fails `-Werror`. Kotlin callers continue to receive a real
+ * `Exception` subclass via `Result.failure(...)`.
  */
+@HiddenFromObjC
 public class ParseLevelError : Exception(LEVEL_PARSE_ERROR)
 
 /**
  * The type returned by [setLogger] if a logger has already been set.
+ *
+ * Hidden from Swift Export for the same reason as [ParseLevelError].
  */
+@HiddenFromObjC
 public class SetLoggerError : Exception(SET_LOGGER_ERROR)
 
 /**

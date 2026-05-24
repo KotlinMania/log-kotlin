@@ -1,7 +1,10 @@
 // port-lint: source kv/value.rs
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 package io.github.kotlinmania.log.kv
 
 import io.github.kotlinmania.serde.core.ser.serialize
+import kotlin.native.HiddenFromObjC
 
 // Structured values.
 //
@@ -146,7 +149,13 @@ public class Value internal constructor(
 
         /**
          * Get a value from a dynamic error.
+         *
+         * Hidden from Swift Export: the Kotlin `Throwable` bridge pulls in the
+         * stdlib `Array<Any?>` surface (via `stackTrace`), and that bridge fails
+         * under `allWarningsAsErrors`. Swift callers compose values via
+         * [captureDisplay]/[captureDebug] instead.
          */
+        @HiddenFromObjC
         public fun fromDynError(err: Throwable): Value {
             return Value(ValueInner.Inner.fromDynError(err))
         }
@@ -156,10 +165,6 @@ public class Value internal constructor(
          */
         public fun nullValue(): Value {
             return Value(ValueInner.Inner.empty())
-        }
-
-        internal fun `null`(): Value {
-            return nullValue()
         }
 
         internal fun fromInner(value: ValueInner.Inner): Value {
@@ -190,7 +195,12 @@ public class Value internal constructor(
 
         /**
          * Get a value from an error.
+         *
+         * Hidden from Swift Export for the same reason as [fromDynError]:
+         * `Throwable` pulls the stdlib `Array<Any?>` bridge into the generated
+         * Swift module and that bridge fails `-Werror`.
          */
+        @HiddenFromObjC
         public fun captureError(err: Throwable): Value {
             return fromDynError(err)
         }
@@ -246,7 +256,14 @@ public class Value internal constructor(
 
     /**
      * Try convert this value into a `Char`.
+     *
+     * Hidden from Swift Export: the bridge generator emits an unnecessary
+     * safe call (`_result?.code.objcPtr()`) for a `Char?` return value, and
+     * `-Werror` rejects the resulting `Unnecessary safe call on a non-null
+     * receiver of type 'Char'` warning. Swift callers obtain the same
+     * character via [toBorrowedStr] and indexing the first scalar.
      */
+    @HiddenFromObjC
     public fun toChar(): Char? = inner.toChar()
 
     /**
@@ -261,7 +278,12 @@ public class Value internal constructor(
 
     /**
      * Try to convert this value into an error.
+     *
+     * Hidden from Swift Export: returning `Throwable` would pull the stdlib
+     * `Array<Any?>` bridge (via `Throwable.stackTrace`) into the generated
+     * Swift module and break `-Werror`.
      */
+    @HiddenFromObjC
     public fun toBorrowedError(): Throwable? = inner.toBorrowedError()
 
     /**
@@ -286,6 +308,7 @@ public class Value internal constructor(
         message = "Downcasting has been removed; this stub always returns false.",
         level = DeprecationLevel.WARNING,
     )
+    @HiddenFromObjC
     public fun isType(): Boolean = false
 
     /**
@@ -297,6 +320,7 @@ public class Value internal constructor(
         message = "Downcasting has been removed; this stub always returns null.",
         level = DeprecationLevel.WARNING,
     )
+    @HiddenFromObjC
     public fun downcastRef(): Any? = null
 
     /**
@@ -394,12 +418,20 @@ public interface VisitValue {
 
     /**
      * Visit an error.
+     *
+     * Hidden from Swift Export: see [Value.fromDynError] — `Throwable` drags
+     * the stdlib `Array<Any?>` bridge into the generated module and that
+     * bridge fails `-Werror`.
      */
+    @HiddenFromObjC
     public fun visitError(err: Throwable): Result<Unit> = visitAny(Value.fromDynError(err))
 
     /**
      * Visit an error.
+     *
+     * Hidden from Swift Export for the same reason as [visitError].
      */
+    @HiddenFromObjC
     public fun visitBorrowedError(err: Throwable): Result<Unit> = visitAny(Value.fromDynError(err))
 }
 

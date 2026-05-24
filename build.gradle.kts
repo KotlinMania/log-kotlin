@@ -28,7 +28,7 @@ plugins {
 }
 
 group = "io.github.kotlinmania"
-version = "0.1.1"
+version = "0.1.2"
 
 
 val androidCommandLineToolsRevision = "14742923"
@@ -641,5 +641,75 @@ afterEvaluate {
                     name.endsWith("XCFramework")
             },
         )
+    }
+}
+
+// Wire `swift test` against the Kotlin → Swift Export bridge into the build.
+//
+// Rationale: a Swift Export breakage (gap #8 patterns, KotlinStdlib bridge
+// unchecked-cast warnings under `-Werror`, the bridge generator's invalid
+// codegen on keyword-clashing identifiers, etc.) is silent in `./gradlew
+// build` unless the `embedSwiftExportForXcode` pipeline actually runs. CI
+// catches it via `.github/workflows/swift.yml`, but waiting for a remote
+// run to surface a source-side regression is too slow — every PR should
+// exercise the Swift Export loop locally on macOS hosts.
+//
+// Pattern copied from `http-kotlin/build.gradle.kts`: the
+// `embedSwiftExportForXcode` task reads Xcode environment variables at
+// configuration time, so it must be invoked from a *child* Gradle process
+// whose environment carries the simulated Xcode variables. The
+// `buildSwiftExportForSwiftTest` Exec does exactly that; `swiftExportTest`
+// then runs `swift test` in `swift-test-harness/` against the package the
+// child invocation produced.
+//
+// Non-macOS hosts skip the Swift Export gate cleanly because the
+// `embedSwiftExportForXcode` task is only generated on macOS. The
+// `swift.yml` workflow remains the canonical Swift runner for CI.
+
+val isMacOsHost: Boolean = System.getProperty("os.name").orEmpty().lowercase().contains("mac")
+
+val swiftExportEnvironment = mapOf(
+    "BUILT_PRODUCTS_DIR" to layout.buildDirectory.dir("swift-test").get().asFile.absolutePath,
+    "TARGET_BUILD_DIR" to layout.buildDirectory.dir("swift-test").get().asFile.absolutePath,
+    "SDK_NAME" to "macosx",
+    "CONFIGURATION" to "Debug",
+    "ARCHS" to "arm64",
+    "FRAMEWORKS_FOLDER_PATH" to "Frameworks",
+    "MACOSX_DEPLOYMENT_TARGET" to "14.0",
+    "DEPLOYMENT_TARGET_SETTING_NAME" to "MACOSX_DEPLOYMENT_TARGET",
+)
+
+val buildSwiftExportForSwiftTest = tasks.register<Exec>("buildSwiftExportForSwiftTest") {
+    group = "verification"
+    description = "Builds the Kotlin → Swift Export SPM package for the local swift test harness."
+    onlyIf("swift export only runs on macOS hosts") { isMacOsHost }
+    commandLine(
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--no-configuration-cache",
+        "embedSwiftExportForXcode",
+    )
+    environment(swiftExportEnvironment)
+    outputs.dir(layout.buildDirectory.dir("swift-test"))
+    outputs.dir(layout.buildDirectory.dir("SPMPackage/macosArm64/Debug"))
+    outputs.upToDateWhen { false }
+}
+
+val swiftExportTest = tasks.register<Exec>("swiftExportTest") {
+    group = "verification"
+    description = "Runs `swift test` against the Kotlin → Swift Export package."
+    onlyIf("swift test only runs on macOS hosts") { isMacOsHost }
+    dependsOn(buildSwiftExportForSwiftTest)
+    workingDir(layout.projectDirectory.dir("swift-test-harness"))
+    commandLine("swift", "test")
+    outputs.upToDateWhen { false }
+}
+
+// Fold `swiftExportTest` into the standard `build` gate on macOS so a
+// Swift Export break fails the build, not just a remote workflow.
+if (isMacOsHost) {
+    tasks.named("build") {
+        dependsOn(swiftExportTest)
     }
 }

@@ -1,23 +1,35 @@
 // port-lint: source __private_api.rs
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.Key
 import io.github.kotlinmania.log.kv.Source
 import io.github.kotlinmania.log.kv.Value
+import kotlin.native.HiddenFromObjC
 
 /**
  * WARNING: this is not part of the public API and is subject to change at any time.
+ *
+ * Every public declaration in this file is annotated `@HiddenFromObjC`. The
+ * file exists so the `log!`/`error!`/`warn!`-style Kotlin macros can compile;
+ * Swift Export does not need it, and exporting it pulls in the
+ * `kotlin.Array<Any?>` and `kotlin.Pair` stdlib bridges (via `vararg Any?`,
+ * `List<Pair<...>>`, and `Triple`) which fail `-Werror`.
  */
 
 
+@HiddenFromObjC
 public fun formatArgs(format: String, vararg args: Any?): Arguments {
     return Arguments(format, args.toList())
 }
 
+@HiddenFromObjC
 public fun modulePath(): String {
     return "<module-path>"
 }
 
+@HiddenFromObjC
 public fun stringify(value: Any?): String {
     return value.toString()
 }
@@ -49,6 +61,7 @@ private fun List<Pair<String, Value>>.intoSource(): Source =
 /**
  * The global logger proxy.
  */
+@HiddenFromObjC
 public class GlobalLogger : Log {
     override fun enabled(metadata: Metadata): Boolean {
         return logger().enabled(metadata)
@@ -101,34 +114,42 @@ internal fun <L : Log> log(
     )
 }
 
+@HiddenFromObjC
 public fun <L : Log> enabled(logger: L, level: Level, target: String): Boolean {
     return logger.enabled(Metadata.builder().level(level).target(target).build())
 }
 
+@HiddenFromObjC
 public fun loc(): Location {
     return Location.caller()
 }
 
+@HiddenFromObjC
 public fun <V : io.github.kotlinmania.log.kv.ToValue> captureToValue(v: V): Value {
     return v.toValue()
 }
 
+@HiddenFromObjC
 public fun captureDebug(v: Any?): Value {
     return Value.fromDebug(v)
 }
 
+@HiddenFromObjC
 public fun captureDisplay(v: Any?): Value {
     return Value.fromDisplay(v)
 }
 
+@HiddenFromObjC
 public fun captureError(v: Throwable): Value {
     return Value.fromDynError(v)
 }
 
+@HiddenFromObjC
 public fun captureSval(v: Any?): Value {
     return Value.fromSval(v)
 }
 
+@HiddenFromObjC
 public fun captureSerde(v: io.github.kotlinmania.serde.core.ser.Serialize): Value {
     return Value.fromSerde(v)
 }

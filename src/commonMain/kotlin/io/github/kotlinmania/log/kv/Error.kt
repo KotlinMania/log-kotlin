@@ -1,5 +1,9 @@
 // port-lint: source kv/error.rs
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 package io.github.kotlinmania.log.kv
+
+import kotlin.native.HiddenFromObjC
 
 /**
  * A typealias for the kind of error value that [Error.boxed] wraps.
@@ -14,7 +18,15 @@ internal typealias BoxedError = Throwable
 
 /**
  * An error encountered while working with structured data.
+ *
+ * Hidden from Swift Export: extending `kotlin.Exception` drags the
+ * `Throwable.stackTrace`/`Array<Any?>` bridge into the generated Swift
+ * module, where the unchecked-cast warnings in `KotlinStdlib.kt` fail
+ * `-Werror`. Kotlin callers continue to receive a real `Exception`
+ * subclass; Swift callers should consume the surrounding `Result<T>`
+ * shape via its non-`Throwable` API surface.
  */
+@HiddenFromObjC
 public class Error private constructor(
     private val inner: Inner,
 ) : Exception() {
