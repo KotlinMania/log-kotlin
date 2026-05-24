@@ -177,7 +177,7 @@ public fun <S : Source> S?.asSource(): Source =
         source.visit(visitor)
     }
 
-public fun <K, V> Map<K, V>.asSource(): Source
+internal fun <K, V> Map<K, V>.asSource(): Source
     where
         K : ToKey,
         V : ToValue =

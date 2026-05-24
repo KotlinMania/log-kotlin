@@ -158,7 +158,7 @@ public class Value internal constructor(
             return Value(ValueInner.Inner.empty())
         }
 
-        public fun `null`(): Value {
+        internal fun `null`(): Value {
             return nullValue()
         }
 
@@ -634,7 +634,7 @@ public fun ULong.toValue(): Value = Value.fromInner(ValueInner.Inner.U64(this))
 
 public fun UInt.toValue(): Value = this.toULong().toValue()
 
-public fun UShort.toValue(): Value = this.toULong().toValue()
+internal fun UShort.toValue(): Value = this.toULong().toValue()
 
 public fun UByte.toValue(): Value = this.toULong().toValue()
 
