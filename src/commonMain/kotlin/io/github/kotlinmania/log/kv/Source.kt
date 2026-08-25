@@ -40,7 +40,7 @@ import kotlin.native.HiddenFromObjC
  * source.visit(Printer()).getOrThrow()
  * ```
  */
-public fun interface Source {
+public interface Source {
     /**
      * Visit key-values.
      *
@@ -55,6 +55,15 @@ public fun interface Source {
      */
     public fun visit(visitor: VisitSource): Result<Unit>
 }
+
+/**
+ * Construct a [Source] from a visitor lambda.
+ */
+@HiddenFromObjC
+public inline fun Source(crossinline block: (VisitSource) -> Result<Unit>): Source =
+    object : Source {
+        override fun visit(visitor: VisitSource): Result<Unit> = block(visitor)
+    }
 
 /**
  * Get the value for a given key.

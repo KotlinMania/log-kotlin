@@ -1,22 +1,10 @@
 // port-lint: source kv/key.rs
 package io.github.kotlinmania.log.kv
 
-import io.github.kotlinmania.serde.core.ser.serialize
-
 // Structured keys.
 //
-// # Serialization support
-//
-// The upstream Rust implementation provides optional sval and serde serialization
-// support through feature-gated `stream`, `stream_ref`, and `serialize` methods.
-// These features require the `kv_sval` and `kv_serde` Cargo features respectively.
-//
-// The Kotlin port provides serde serialization support through serde-kotlin when
-// that dependency is available. The `serialize` method delegates to serde-kotlin's
-// Serialize implementation for String.
-//
-// The sval-based methods (`stream` and `stream_ref`) are not ported because sval
-// has no Kotlin Multiplatform equivalent.
+// Sval and serde streaming/serialization helpers are omitted because they depend
+// on external frameworks not configured in common dependencies.
 
 /**
  * A type that can be converted into a [Key].
@@ -91,16 +79,6 @@ public class Key private constructor(
      * Format the key as a string. Delegates to [toString].
      */
     public fun fmt(): String = toString()
-
-    /**
-     * Serialize this key using serde.
-     *
-     * The key is serialized as its underlying string value.
-     */
-    public fun <Ok, E> serialize(serializer: io.github.kotlinmania.serde.core.ser.Serializer<Ok, E>): Result<Ok>
-            where E : io.github.kotlinmania.serde.core.ser.Error {
-        return key.serialize(serializer)
-    }
 
     override fun compareTo(other: Key): Int = key.compareTo(other.key)
 
