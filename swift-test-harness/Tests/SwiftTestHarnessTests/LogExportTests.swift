@@ -1,4 +1,4 @@
-import XCTest
+import Testing
 import Log
 
 // Smoke test for the Kotlin → Swift Export → SPM → swift test pipeline.
@@ -28,8 +28,11 @@ import Log
 // Add more meaningful per-API tests below as the Swift Export surface
 // grows. For now the import + a single passing assertion is the
 // canary that the pipeline is green for this repo.
-final class LogExportTests: XCTestCase {
-    func testSwiftModuleLoads() throws {
-        XCTAssertTrue(true, "Log swift module imported cleanly")
+@Suite
+struct LogExportTests {
+    @Test
+    func swiftModuleLoads() {
+        #expect(true, "Log swift module imported cleanly")
     }
 }
+
