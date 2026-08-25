@@ -58,8 +58,6 @@ internal fun Value.toToken(): Token =
         is ValueInner.Inner.Debug -> error("Token has no Debug arm; test must not feed Debug to toToken().")
         is ValueInner.Inner.Display -> error("Token has no Display arm; test must not feed Display to toToken().")
         is ValueInner.Inner.ErrorValue -> error("Token has no Error arm; test must not feed Error to toToken().")
-        is ValueInner.Inner.Serde -> error("Token has no Serde arm; test must not feed Serde to toToken().")
-        is ValueInner.Inner.Sval -> error("Token has no Sval arm; test must not feed Sval to toToken().")
     }
 
 // --- Test fixture iterators ----------------------------------------------

@@ -5,13 +5,13 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 9/9 (100.0%)
-- **Function parity:** 125/200 matched (target 288) — 62.5%
-- **Class/type parity:** 24/40 matched (target 58) — 60.0%
-- **Combined symbol parity:** 149/240 matched (target 346) — 62.1%
-- **Average inline-code cosine:** 0.24 (function body across 8 matched files)
-- **Average documentation cosine:** 0.71 (doc text across 8 matched files)
-- **Cheat-zeroed Files:** 5
-- **Critical Issues:** 8 files with <0.60 function similarity
+- **Function parity:** 143/200 matched (target 310) — 71.5%
+- **Class/type parity:** 25/40 matched (target 61) — 62.5%
+- **Combined symbol parity:** 168/240 matched (target 371) — 70.0%
+- **Average inline-code cosine:** 0.16 (function body across 8 matched files)
+- **Average documentation cosine:** 0.62 (doc text across 8 matched files)
+- **Cheat-zeroed Files:** 6
+- **Critical Issues:** 9 files with <0.60 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
@@ -43,24 +43,24 @@ Every matched file is listed below with function and type symbol parity.
 - **Target:** `kv.Value [ZERO]`
 - **Similarity:** 0.00
 - **Dependents:** 2
-- **Priority Score:** 2177310.0
-- **Functions:** 52/66 matched (target 101)
-- **Missing functions:** `null`, `serialize`, `stream`, `stream_ref`, `visit_empty`, `to_test_token`, `is`, `to_token`, `unsigned`, `signed`, `float`, `bool`, `str`, `char`
-- **Types:** 4/7 matched (target 20)
-- **Missing types:** `ToValue`, `VisitValue`, `InnerVisitValue`
+- **Priority Score:** 2207310.0
+- **Functions:** 48/66 matched (target 94)
+- **Missing functions:** `from_serde`, `from_sval`, `null`, `serialize`, `stream`, `stream_ref`, `visit_empty`, `to_test_token`, `capture_serde`, `capture_sval`, `is`, `to_token`, `unsigned`, `signed`, `float`, `bool`, `str`, `char`
+- **Types:** 5/7 matched (target 20)
+- **Missing types:** `ToValue`, `InnerVisitValue`
 - **Tests:** 9/17 matched
 
 ### 3. lib
 
-- **Target:** `log.Lib`
-- **Similarity:** 0.41
+- **Target:** `log.Lib [ZERO]`
+- **Similarity:** 0.00
 - **Dependents:** 0
-- **Priority Score:** 458405.9
-- **Functions:** 29/69 matched
-- **Missing functions:** `load`, `store`, `eq`, `partial_cmp`, `fmt`, `to_level`, `get`, `default`, `set_max_level_racy`, `set_boxed_logger`, `set_logger_inner`, `set_logger_racy`, `test_levelfilter_from_str`, `test_level_from_str`, `test_level_as_str`, `test_level_show`, `test_levelfilter_show`, `test_cross_cmp`, `test_cross_eq`, `test_to_level`, `test_to_level_filter`, `test_level_filter_as_str`, `test_level_up`, `test_level_filter_up`, `test_level_down`, `test_level_filter_down`, `test_static_max_level_debug`, `test_static_max_level_release`, `test_error_trait`, `test_metadata_builder`, `test_metadata_convenience_builder`, `test_record_builder`, `test_record_convenience_builder`, `test_record_complete_builder`, `test_record_key_values_builder`, `visit_pair`, `test_record_key_values_get_coerce`, `test_foreign_impl`, `assert_is_log`, `forall`
-- **Types:** 10/15 matched (target 13)
+- **Priority Score:** 218410.0
+- **Functions:** 53/69 matched (target 99)
+- **Missing functions:** `load`, `store`, `eq`, `partial_cmp`, `fmt`, `get`, `default`, `set_max_level_racy`, `set_boxed_logger`, `set_logger_inner`, `set_logger_racy`, `test_static_max_level_debug`, `test_static_max_level_release`, `visit_pair`, `assert_is_log`, `forall`
+- **Types:** 10/15 matched (target 16)
 - **Missing types:** `AtomicUsize`, `Err`, `MaybeStaticStr`, `KeyValues`, `TestVisitSource`
-- **Tests:** 0/28 matched
+- **Tests:** 23/28 matched
 - **Lint issues:** 1
 
 ### 4. serde
@@ -90,11 +90,11 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 6. kv.key
 
-- **Target:** `kv.Key [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `kv.Key`
+- **Similarity:** 0.53
 - **Dependents:** 0
-- **Priority Score:** 41510.0
-- **Functions:** 10/13 matched (target 14)
+- **Priority Score:** 41504.7
+- **Functions:** 10/13 matched (target 15)
 - **Missing functions:** `stream`, `stream_ref`, `serialize`
 - **Types:** 1/2 matched
 - **Missing types:** `ToKey`
@@ -102,12 +102,12 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 7. __private_api
 
-- **Target:** `log.PrivateApi`
-- **Similarity:** 0.81
+- **Target:** `log.PrivateApi [ZERO]`
+- **Similarity:** 0.00
 - **Dependents:** 0
-- **Priority Score:** 11501.9
-- **Functions:** 12/12 matched (target 19)
-- **Missing functions:** _none_
+- **Priority Score:** 31510.0
+- **Functions:** 10/12 matched (target 17)
+- **Missing functions:** `capture_sval`, `capture_serde`
 - **Types:** 2/3 matched (target 4)
 - **Missing types:** `Value`
 

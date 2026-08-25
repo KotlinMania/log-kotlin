@@ -144,12 +144,5 @@ public fun captureError(v: Throwable): Value {
     return Value.fromDynError(v)
 }
 
-@HiddenFromObjC
-public fun captureSval(v: Any?): Value {
-    return Value.fromSval(v)
-}
+// captureSval and captureSerde are omitted because they depend on external crates (sval, serde_core).
 
-@HiddenFromObjC
-public fun captureSerde(v: io.github.kotlinmania.serde.core.ser.Serialize): Value {
-    return Value.fromSerde(v)
-}
