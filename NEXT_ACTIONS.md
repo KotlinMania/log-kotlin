@@ -5,9 +5,9 @@ Based on AST analysis, here are the concrete next steps.
 ## Summary
 
 - **Files Present:** 9/9 (100.0%)
-- **Function parity:** 143/200 matched (target 310) — 71.5%
-- **Class/type parity:** 25/40 matched (target 61) — 62.5%
-- **Combined symbol parity:** 168/240 matched (target 371) — 70.0%
+- **Function parity:** 143/200 matched (target 312) — 71.5%
+- **Class/type parity:** 26/40 matched (target 62) — 65.0%
+- **Combined symbol parity:** 169/240 matched (target 374) — 70.4%
 - **Average inline-code cosine:** 0.16 (function body across 8 matched files)
 - **Average documentation cosine:** 0.62 (doc text across 8 matched files)
 - **Cheat-zeroed Files:** 6
@@ -75,20 +75,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `LevelIdentifier`, `Value`, `LevelEnum`, `LevelFilterIdentifier`, `LevelFilterEnum`
 - **Tests:** 6/16 matched
 
-### 5. kv.source
-
-- **Target:** `kv.Source [ZERO]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 41610.0
-- **Functions:** 8/11 matched (target 16)
-- **Missing functions:** `source_is_object_safe`, `_check`, `visitor_is_object_safe`
-- **Types:** 4/5 matched (target 6)
-- **Missing types:** `Source`
-- **Tests:** 2/5 matched
-- **Lint issues:** 1
-
-### 6. kv.key
+### 5. kv.key
 
 - **Target:** `kv.Key`
 - **Similarity:** 0.53
@@ -99,6 +86,19 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/2 matched
 - **Missing types:** `ToKey`
 - **Tests:** 2/2 matched
+
+### 6. kv.source
+
+- **Target:** `kv.Source [ZERO]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 31610.0
+- **Functions:** 8/11 matched (target 18)
+- **Missing functions:** `source_is_object_safe`, `_check`, `visitor_is_object_safe`
+- **Types:** 5/5 matched (target 7)
+- **Missing types:** _none_
+- **Tests:** 2/5 matched
+- **Lint issues:** 1
 
 ### 7. __private_api
 
