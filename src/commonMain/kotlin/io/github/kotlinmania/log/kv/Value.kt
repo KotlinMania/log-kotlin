@@ -83,6 +83,22 @@ public class Value internal constructor(
             return Value(ValueInner.Inner.empty())
         }
 
+        /**
+         * Get a `null` value. Upstream `Value::null()` alias.
+         */
+        @HiddenFromObjC
+        public fun `null`(): Value = nullValue()
+
+        /**
+         * Get a value from a type implementing serde serialization.
+         */
+        public fun fromSerde(value: Any?): Value = fromDisplay(value)
+
+        /**
+         * Get a value from a type implementing sval serialization.
+         */
+        public fun fromSval(value: Any?): Value = fromDisplay(value)
+
         internal fun fromInner(value: ValueInner.Inner): Value {
             return Value(value)
         }
@@ -120,6 +136,16 @@ public class Value internal constructor(
         public fun captureError(err: Throwable): Value {
             return fromDynError(err)
         }
+
+        /**
+         * Get a value from a type implementing serde serialization.
+         */
+        public fun captureSerde(value: Any?): Value = fromSerde(value)
+
+        /**
+         * Get a value from a type implementing sval serialization.
+         */
+        public fun captureSval(value: Any?): Value = fromSval(value)
     }
 
     override fun toValue(): Value = Value(inner)
@@ -214,6 +240,16 @@ public class Value internal constructor(
     public fun isType(): Boolean = false
 
     /**
+     * Check whether this value is of a particular type. Upstream `is` alias for [isType].
+     */
+    @Deprecated(
+        message = "Downcasting has been removed; this stub always returns false.",
+        level = DeprecationLevel.WARNING,
+    )
+    @HiddenFromObjC
+    public fun `is`(): Boolean = false
+
+    /**
      * Try to downcast this value to [T]. Upstream removed downcasting and
      * kept this method as a deprecated stub that unconditionally returns
      * `null`; the Kotlin port mirrors that exact stub shape.
@@ -262,6 +298,11 @@ public interface VisitValue {
      * Visit an empty value.
      */
     public fun visitNull(): Result<Unit> = visitAny(Value.nullValue())
+
+    /**
+     * Visit an empty value. Upstream alias for [visitNull].
+     */
+    public fun visitEmpty(): Result<Unit> = visitNull()
 
     /**
      * Visit an unsigned integer.
