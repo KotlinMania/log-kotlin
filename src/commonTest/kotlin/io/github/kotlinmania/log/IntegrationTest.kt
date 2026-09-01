@@ -1,4 +1,4 @@
-// port-lint: source ../tests/integration.rs
+// port-lint: source tests/integration.rs
 package io.github.kotlinmania.log
 
 import kotlin.test.Test

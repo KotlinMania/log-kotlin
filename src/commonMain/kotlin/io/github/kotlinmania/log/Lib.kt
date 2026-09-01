@@ -573,6 +573,13 @@ public fun setMaxLevel(level: LevelFilter) {
 }
 
 /**
+ * An unsafely-racy version of [setMaxLevel].
+ */
+public fun setMaxLevelRacy(level: LevelFilter) {
+    setMaxLevel(level)
+}
+
+/**
  * Returns the current maximum log level.
  */
 public fun maxLevel(): LevelFilter {
@@ -603,6 +610,16 @@ public fun setLogger(logger: Log): Result<Unit> {
         else -> Result.failure(SetLoggerError())
     }
 }
+
+/**
+ * Sets the global logger to a boxed [Log] instance. In Kotlin, identical to [setLogger].
+ */
+public fun setBoxedLogger(logger: Log): Result<Unit> = setLogger(logger)
+
+/**
+ * An unsafely-racy version of [setLogger].
+ */
+public fun setLoggerRacy(logger: Log): Result<Unit> = setLogger(logger)
 
 /**
  * Returns a reference to the logger.

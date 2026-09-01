@@ -1,4 +1,4 @@
-// port-lint: source ../tests/macros.rs
+// port-lint: source tests/macros.rs
 package io.github.kotlinmania.log
 
 import io.github.kotlinmania.log.kv.toValue
