@@ -31,11 +31,17 @@ public class Error private constructor(
     private val inner: Inner,
 ) : Exception() {
     private sealed interface Inner {
-        data class Boxed(val err: BoxedError) : Inner
+        data class Boxed(
+            val err: BoxedError,
+        ) : Inner
 
-        data class Value(val err: Error) : Inner
+        data class Value(
+            val err: Error,
+        ) : Inner
 
-        data class Msg(val msg: String) : Inner
+        data class Msg(
+            val msg: String,
+        ) : Inner
 
         data object Fmt : Inner
     }
@@ -46,16 +52,12 @@ public class Error private constructor(
         /**
          * Create an error from a message.
          */
-        public fun msg(msg: String): Error {
-            return Error(Inner.Msg(msg))
-        }
+        public fun msg(msg: String): Error = Error(Inner.Msg(msg))
 
         /**
          * Create an error from a standard error type.
          */
-        public fun boxed(err: Throwable): Error {
-            return Error(Inner.Boxed(err))
-        }
+        public fun boxed(err: Throwable): Error = Error(Inner.Boxed(err))
 
         /**
          * Create an error from a throwable. In the upstream Rust
@@ -63,9 +65,7 @@ public class Error private constructor(
          * for IO errors. In Kotlin, any [Throwable] reaches this entry
          * point, so the conversion is just an alias for [boxed].
          */
-        public fun from(err: Throwable): Error {
-            return boxed(err)
-        }
+        public fun from(err: Throwable): Error = boxed(err)
 
         /**
          * Create a formatting error. In the upstream Rust implementation,
@@ -73,41 +73,33 @@ public class Error private constructor(
          * errors. Kotlin has no separate formatting-error type, so a
          * no-arg factory is used to construct the Fmt variant.
          */
-        public fun fromFormat(): Error {
-            return Error(Inner.Fmt)
-        }
+        public fun fromFormat(): Error = Error(Inner.Fmt)
 
         // Not public so the value-inner error machinery is not leaked across the
         // package boundary.
-        internal fun fromValue(err: Error): Error {
-            return Error(Inner.Value(err))
-        }
+        internal fun fromValue(err: Error): Error = Error(Inner.Value(err))
     }
 
     // Not public so the value-inner error machinery is not leaked across the
     // package boundary.
-    internal fun intoValue(): Error {
-        return when (val currentInner = inner) {
+    internal fun intoValue(): Error =
+        when (val currentInner = inner) {
             is Inner.Value -> currentInner.err
             else -> this
         }
-    }
 
     /**
      * Format the error as a string. In the upstream Rust implementation,
      * this corresponds to a Display trait implementation; it delegates to
      * [toString].
      */
-    public fun fmt(): String {
-        return toString()
-    }
+    public fun fmt(): String = toString()
 
-    public override fun toString(): String {
-        return when (val currentInner = inner) {
+    public override fun toString(): String =
+        when (val currentInner = inner) {
             is Inner.Boxed -> currentInner.err.toString()
             is Inner.Value -> currentInner.err.toString()
             is Inner.Msg -> currentInner.msg
             Inner.Fmt -> FMT_ERROR_MESSAGE
         }
-    }
 }

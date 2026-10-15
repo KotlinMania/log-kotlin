@@ -3,6 +3,10 @@
 
 package io.github.kotlinmania.log
 
+import io.github.kotlinmania.serde.SerdeResult
+import io.github.kotlinmania.serdecore.de.Deserialize
+import io.github.kotlinmania.serdecore.ser.Serialize
+import io.github.kotlinmania.serdecore.ser.Serializer
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -40,7 +44,7 @@ internal const val LEVEL_PARSE_ERROR: String =
  */
 public enum class Level(
     internal val discriminant: Int,
-) {
+) : Serialize {
     /**
      * The "error" level.
      *
@@ -87,9 +91,7 @@ public enum class Level(
     /**
      * Converts this [Level] to the equivalent [LevelFilter].
      */
-    public fun toLevelFilter(): LevelFilter {
-        return LevelFilter.fromUsize(discriminant)!!
-    }
+    public fun toLevelFilter(): LevelFilter = LevelFilter.fromUsize(discriminant)!!
 
     /**
      * Returns the string representation of the [Level].
@@ -109,9 +111,7 @@ public enum class Level(
      * If the current [Level] is at the highest level, the returned [Level] will be the same as the
      * current one.
      */
-    public fun incrementSeverity(): Level {
-        return fromUsize(discriminant + 1) ?: this
-    }
+    public fun incrementSeverity(): Level = fromUsize(discriminant + 1) ?: this
 
     /**
      * Get the next-lowest [Level] from this one.
@@ -126,7 +126,16 @@ public enum class Level(
 
     public override fun toString(): String = asStr()
 
-    public companion object {
+    override fun <Ok> serialize(serializer: Serializer<Ok>): SerdeResult<Ok> =
+        when (this) {
+            Error -> serializer.serializeUnitVariant("Level", 0u, "ERROR")
+            Warn -> serializer.serializeUnitVariant("Level", 1u, "WARN")
+            Info -> serializer.serializeUnitVariant("Level", 2u, "INFO")
+            Debug -> serializer.serializeUnitVariant("Level", 3u, "DEBUG")
+            Trace -> serializer.serializeUnitVariant("Level", 4u, "TRACE")
+        }
+
+    public companion object : Deserialize<Level> by LevelDeserialize {
         internal fun fromUsize(u: Int): Level? =
             when (u) {
                 1 -> Error
@@ -156,7 +165,7 @@ public enum class Level(
  */
 public enum class LevelFilter(
     internal val discriminant: Int,
-) {
+) : Serialize {
     /**
      * A level lower than all log levels.
      */
@@ -215,9 +224,7 @@ public enum class LevelFilter(
      * If the current [LevelFilter] is at the highest level, the returned [LevelFilter] will be the
      * same as the current one.
      */
-    public fun incrementSeverity(): LevelFilter {
-        return fromUsize(discriminant + 1) ?: this
-    }
+    public fun incrementSeverity(): LevelFilter = fromUsize(discriminant + 1) ?: this
 
     /**
      * Get the next-lowest [LevelFilter] from this one.
@@ -232,7 +239,17 @@ public enum class LevelFilter(
 
     public override fun toString(): String = asStr()
 
-    public companion object {
+    override fun <Ok> serialize(serializer: Serializer<Ok>): SerdeResult<Ok> =
+        when (this) {
+            Off -> serializer.serializeUnitVariant("LevelFilter", 0u, "OFF")
+            Error -> serializer.serializeUnitVariant("LevelFilter", 1u, "ERROR")
+            Warn -> serializer.serializeUnitVariant("LevelFilter", 2u, "WARN")
+            Info -> serializer.serializeUnitVariant("LevelFilter", 3u, "INFO")
+            Debug -> serializer.serializeUnitVariant("LevelFilter", 4u, "DEBUG")
+            Trace -> serializer.serializeUnitVariant("LevelFilter", 5u, "TRACE")
+        }
+
+    public companion object : Deserialize<LevelFilter> by LevelFilterDeserialize {
         internal fun fromUsize(u: Int): LevelFilter? =
             when (u) {
                 0 -> Off
@@ -321,15 +338,15 @@ public data class Record(
     /**
      * The structured key-value pairs associated with the message.
      */
-    public fun keyValues(): io.github.kotlinmania.log.kv.Source {
-        return keyValues ?: io.github.kotlinmania.log.kv.Source { Result.success(Unit) }
-    }
+    public fun keyValues(): io.github.kotlinmania.log.kv.Source =
+        keyValues ?: io.github.kotlinmania.log.kv
+            .Source { Result.success(Unit) }
 
     /**
      * Create a new [RecordBuilder] based on this record.
      */
-    public fun toBuilder(): RecordBuilder {
-        return RecordBuilder(
+    public fun toBuilder(): RecordBuilder =
+        RecordBuilder(
             record =
                 Record(
                     metadata = metadata,
@@ -340,7 +357,6 @@ public data class Record(
                     keyValues = keyValues,
                 ),
         )
-    }
 }
 
 /**
@@ -353,8 +369,8 @@ public class RecordBuilder internal constructor(
         /**
          * Construct new [RecordBuilder].
          */
-        public fun new(): RecordBuilder {
-            return RecordBuilder(
+        public fun new(): RecordBuilder =
+            RecordBuilder(
                 record =
                     Record(
                         args = Arguments("", emptyList()),
@@ -365,78 +381,77 @@ public class RecordBuilder internal constructor(
                         keyValues = null,
                     ),
             )
-        }
     }
 
     /**
      * Set args.
      */
-    public fun args(args: Arguments): RecordBuilder {
-        return RecordBuilder(record.copy(args = args))
-    }
+    public fun args(args: Arguments): RecordBuilder = RecordBuilder(record.copy(args = args))
 
     /**
      * Set metadata.
      */
-    public fun metadata(metadata: Metadata): RecordBuilder {
-        return RecordBuilder(record.copy(metadata = metadata))
-    }
+    public fun metadata(metadata: Metadata): RecordBuilder = RecordBuilder(record.copy(metadata = metadata))
 
     /**
      * Set level.
      */
-    public fun level(level: Level): RecordBuilder {
-        return RecordBuilder(record.copy(metadata = record.metadata().toBuilder().level(level).build()))
-    }
+    public fun level(level: Level): RecordBuilder =
+        RecordBuilder(
+            record.copy(
+                metadata =
+                    record
+                        .metadata()
+                        .toBuilder()
+                        .level(level)
+                        .build(),
+            ),
+        )
 
     /**
      * Set target.
      */
-    public fun target(target: String): RecordBuilder {
-        return RecordBuilder(record.copy(metadata = record.metadata().toBuilder().target(target).build()))
-    }
+    public fun target(target: String): RecordBuilder =
+        RecordBuilder(
+            record.copy(
+                metadata =
+                    record
+                        .metadata()
+                        .toBuilder()
+                        .target(target)
+                        .build(),
+            ),
+        )
 
     /**
      * Set modulePath.
      */
-    public fun modulePath(path: String?): RecordBuilder {
-        return RecordBuilder(record.copy(modulePath = path))
-    }
+    public fun modulePath(path: String?): RecordBuilder = RecordBuilder(record.copy(modulePath = path))
 
     /**
      * Set modulePath to a static string.
      */
-    public fun modulePathStatic(path: String?): RecordBuilder {
-        return modulePath(path)
-    }
+    public fun modulePathStatic(path: String?): RecordBuilder = modulePath(path)
 
     /**
      * Set file.
      */
-    public fun file(file: String?): RecordBuilder {
-        return RecordBuilder(record.copy(file = file))
-    }
+    public fun file(file: String?): RecordBuilder = RecordBuilder(record.copy(file = file))
 
     /**
      * Set file to a static string.
      */
-    public fun fileStatic(file: String?): RecordBuilder {
-        return file(file)
-    }
+    public fun fileStatic(file: String?): RecordBuilder = file(file)
 
     /**
      * Set line.
      */
-    public fun line(line: Int?): RecordBuilder {
-        return RecordBuilder(record.copy(line = line))
-    }
+    public fun line(line: Int?): RecordBuilder = RecordBuilder(record.copy(line = line))
 
     /**
      * Set keyValues.
      */
-    public fun keyValues(kvs: io.github.kotlinmania.log.kv.Source?): RecordBuilder {
-        return RecordBuilder(record.copy(keyValues = kvs))
-    }
+    public fun keyValues(kvs: io.github.kotlinmania.log.kv.Source?): RecordBuilder = RecordBuilder(record.copy(keyValues = kvs))
 
     /**
      * Invoke the builder and return a [Record].
@@ -486,30 +501,25 @@ public class MetadataBuilder internal constructor(
          * - level: [Level.Info]
          * - target: ""
          */
-        public fun new(): MetadataBuilder {
-            return MetadataBuilder(
+        public fun new(): MetadataBuilder =
+            MetadataBuilder(
                 metadata =
                     Metadata(
                         level = Level.Info,
                         target = "",
                     ),
             )
-        }
     }
 
     /**
      * Setter for [Metadata.level].
      */
-    public fun level(arg: Level): MetadataBuilder {
-        return MetadataBuilder(metadata.copy(level = arg))
-    }
+    public fun level(arg: Level): MetadataBuilder = MetadataBuilder(metadata.copy(level = arg))
 
     /**
      * Setter for [Metadata.target].
      */
-    public fun target(target: String): MetadataBuilder {
-        return MetadataBuilder(metadata.copy(target = target))
-    }
+    public fun target(target: String): MetadataBuilder = MetadataBuilder(metadata.copy(target = target))
 
     /**
      * Returns a [Metadata] object.
@@ -626,9 +636,7 @@ public fun setLoggerRacy(logger: Log): Result<Unit> = setLogger(logger)
  *
  * If a logger has not been set, a no-op implementation is returned.
  */
-public fun logger(): Log {
-    return if (STATE.load() != INITIALIZED) NopLogger else LOGGER.load()
-}
+public fun logger(): Log = if (STATE.load() != INITIALIZED) NopLogger else LOGGER.load()
 
 /**
  * The statically resolved maximum log level.
@@ -683,9 +691,7 @@ public data class Location(
     public val line: Int?,
 ) {
     public companion object {
-        public fun caller(): Location {
-            return Location(file = null, line = null)
-        }
+        public fun caller(): Location = Location(file = null, line = null)
     }
 }
 
@@ -732,14 +738,24 @@ internal object LibTests {
 
     fun testMetadataBuilder() {
         val target = "myApp"
-        val metadataTest = MetadataBuilder.new().level(Level.Debug).target(target).build()
+        val metadataTest =
+            MetadataBuilder
+                .new()
+                .level(Level.Debug)
+                .target(target)
+                .build()
         assertEquals(Level.Debug, metadataTest.level())
         assertEquals("myApp", metadataTest.target())
     }
 
     fun testMetadataConvenienceBuilder() {
         val target = "myApp"
-        val metadataTest = Metadata.builder().level(Level.Debug).target(target).build()
+        val metadataTest =
+            Metadata
+                .builder()
+                .level(Level.Debug)
+                .target(target)
+                .build()
         assertEquals(Level.Debug, metadataTest.level())
         assertEquals("myApp", metadataTest.target())
     }
@@ -749,7 +765,8 @@ internal object LibTests {
         val metadata = MetadataBuilder.new().target(target).build()
         val fmtArgs = Arguments("hello", emptyList())
         val recordTest =
-            RecordBuilder.new()
+            RecordBuilder
+                .new()
                 .args(fmtArgs)
                 .metadata(metadata)
                 .modulePath("foo")
@@ -767,7 +784,8 @@ internal object LibTests {
         val metadata = Metadata.builder().target(target).build()
         val fmtArgs = Arguments("hello", emptyList())
         val recordTest =
-            Record.builder()
+            Record
+                .builder()
                 .args(fmtArgs)
                 .metadata(metadata)
                 .modulePath("foo")
@@ -783,7 +801,8 @@ internal object LibTests {
     fun testRecordCompleteBuilder() {
         val target = "myApp"
         val recordTest =
-            Record.builder()
+            Record
+                .builder()
                 .modulePath("foo")
                 .file("bar")
                 .line(30)

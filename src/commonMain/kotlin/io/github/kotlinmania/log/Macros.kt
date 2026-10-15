@@ -7,7 +7,6 @@ import io.github.kotlinmania.log.kv.ToValue
 import io.github.kotlinmania.log.kv.Value
 import kotlin.native.HiddenFromObjC
 
-
 /**
  * The standard logging macro.
  *
@@ -259,13 +258,9 @@ public fun trace(logger: Log, target: String, args: Arguments) {
 /**
  * Determines if a log message with the specified [Level] would be logged.
  */
-public fun logEnabled(level: Level): Boolean {
-    return logEnabled(level = level, target = modulePath(), logger = __logGlobalLogger)
-}
+public fun logEnabled(level: Level): Boolean = logEnabled(level = level, target = modulePath(), logger = __logGlobalLogger)
 
-public fun logEnabled(level: Level, target: String): Boolean {
-    return logEnabled(level = level, target = target, logger = __logGlobalLogger)
-}
+public fun logEnabled(level: Level, target: String): Boolean = logEnabled(level = level, target = target, logger = __logGlobalLogger)
 
 public fun logEnabled(level: Level, target: String, logger: Log): Boolean {
     val lvl = level

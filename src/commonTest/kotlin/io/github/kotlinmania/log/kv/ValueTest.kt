@@ -22,17 +22,29 @@ internal sealed class Token {
         override fun toString() = "None"
     }
 
-    data class Bool(val value: Boolean) : Token()
+    data class Bool(
+        val value: Boolean,
+    ) : Token()
 
-    data class CharValue(val value: Char) : Token()
+    data class CharValue(
+        val value: Char,
+    ) : Token()
 
-    data class Str(val value: String) : Token()
+    data class Str(
+        val value: String,
+    ) : Token()
 
-    data class F64(val value: Double) : Token()
+    data class F64(
+        val value: Double,
+    ) : Token()
 
-    data class I64(val value: Long) : Token()
+    data class I64(
+        val value: Long,
+    ) : Token()
 
-    data class U64(val value: ULong) : Token()
+    data class U64(
+        val value: ULong,
+    ) : Token()
 }
 
 /**
@@ -240,7 +252,9 @@ class ValueTest {
         // inside test_visit_integer. Kept as a named inner class so the
         // upstream helper has a Kotlin counterpart that participates in
         // symbol parity tracking.
-        class Extract(var captured: ULong? = null) : VisitValue {
+        class Extract(
+            var captured: ULong? = null,
+        ) : VisitValue {
             override fun visitAny(value: Value): Result<Unit> =
                 error("unexpected value: $value")
 
@@ -260,7 +274,9 @@ class ValueTest {
         // Translation of upstream's local `struct Extract<'v>(Option<&'v str>)`
         // inside test_visit_borrowed_str. Kotlin has no lifetimes; the
         // borrowed/owned distinction collapses to ordinary String references.
-        class Extract(var captured: String? = null) : VisitValue {
+        class Extract(
+            var captured: String? = null,
+        ) : VisitValue {
             override fun visitAny(value: Value): Result<Unit> =
                 error("unexpected value: $value")
 

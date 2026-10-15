@@ -9,7 +9,9 @@ private class State {
     var lastLogLocation: Int? = null
 }
 
-private class Logger(private val state: State) : Log {
+private class Logger(
+    private val state: State,
+) : Log {
     override fun enabled(metadata: Metadata): Boolean = true
 
     override fun log(record: Record) {

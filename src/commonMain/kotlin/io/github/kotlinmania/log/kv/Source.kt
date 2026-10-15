@@ -171,8 +171,8 @@ public typealias Visitor = VisitSource
 @HiddenFromObjC
 public fun <K, V> Pair<K, V>.asSource(): Source
     where
-        K : ToKey,
-        V : ToValue =
+          K : ToKey,
+          V : ToValue =
     Source { visitor -> visitor.visitPair(first.toKey(), second.toValue()) }
 
 /**
@@ -217,8 +217,8 @@ public fun <S : Source> S?.asSource(): Source =
 
 internal fun <K, V> Map<K, V>.asSource(): Source
     where
-        K : ToKey,
-        V : ToValue =
+          K : ToKey,
+          V : ToValue =
     Source { visitor ->
         for ((key, value) in this) {
             visitor.visitPair(key.toKey(), value.toValue()).getOrElse { return@Source Result.failure(it) }
