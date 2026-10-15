@@ -31,37 +31,27 @@ public class Value internal constructor(
         /**
          * Get a value from a type implementing [ToValue].
          */
-        public fun <T : ToValue> fromAny(value: T): Value {
-            return value.toValue()
-        }
+        public fun <T : ToValue> fromAny(value: T): Value = value.toValue()
 
         /**
          * Get a value from a type implementing debug formatting.
          */
-        public fun fromDebug(value: Any?): Value {
-            return Value(ValueInner.Inner.fromDebug(value))
-        }
+        public fun fromDebug(value: Any?): Value = Value(ValueInner.Inner.fromDebug(value))
 
         /**
          * Get a value from a type implementing display formatting.
          */
-        public fun fromDisplay(value: Any?): Value {
-            return Value(ValueInner.Inner.fromDisplay(value))
-        }
+        public fun fromDisplay(value: Any?): Value = Value(ValueInner.Inner.fromDisplay(value))
 
         /**
          * Get a value from a dynamic debug value.
          */
-        public fun fromDynDebug(value: Any?): Value {
-            return Value(ValueInner.Inner.fromDynDebug(value))
-        }
+        public fun fromDynDebug(value: Any?): Value = Value(ValueInner.Inner.fromDynDebug(value))
 
         /**
          * Get a value from a dynamic display value.
          */
-        public fun fromDynDisplay(value: Any?): Value {
-            return Value(ValueInner.Inner.fromDynDisplay(value))
-        }
+        public fun fromDynDisplay(value: Any?): Value = Value(ValueInner.Inner.fromDynDisplay(value))
 
         /**
          * Get a value from a dynamic error.
@@ -72,16 +62,12 @@ public class Value internal constructor(
          * [captureDisplay]/[captureDebug] instead.
          */
         @HiddenFromObjC
-        public fun fromDynError(err: Throwable): Value {
-            return Value(ValueInner.Inner.fromDynError(err))
-        }
+        public fun fromDynError(err: Throwable): Value = Value(ValueInner.Inner.fromDynError(err))
 
         /**
          * Get a `null` value.
          */
-        public fun nullValue(): Value {
-            return Value(ValueInner.Inner.empty())
-        }
+        public fun nullValue(): Value = Value(ValueInner.Inner.empty())
 
         /**
          * Get a `null` value. Upstream `Value::null()` alias.
@@ -99,9 +85,7 @@ public class Value internal constructor(
          */
         public fun fromSval(value: Any?): Value = fromDisplay(value)
 
-        internal fun fromInner(value: ValueInner.Inner): Value {
-            return Value(value)
-        }
+        internal fun fromInner(value: ValueInner.Inner): Value = Value(value)
 
         /**
          * Construct a value from a string. In the upstream Rust implementation,
@@ -114,16 +98,12 @@ public class Value internal constructor(
         /**
          * Get a value from a type implementing debug formatting.
          */
-        public fun captureDebug(value: Any?): Value {
-            return fromDebug(value)
-        }
+        public fun captureDebug(value: Any?): Value = fromDebug(value)
 
         /**
          * Get a value from a type implementing display formatting.
          */
-        public fun captureDisplay(value: Any?): Value {
-            return fromDisplay(value)
-        }
+        public fun captureDisplay(value: Any?): Value = fromDisplay(value)
 
         /**
          * Get a value from an error.
@@ -133,9 +113,7 @@ public class Value internal constructor(
          * Swift module and that bridge fails `-Werror`.
          */
         @HiddenFromObjC
-        public fun captureError(err: Throwable): Value {
-            return fromDynError(err)
-        }
+        public fun captureError(err: Throwable): Value = fromDynError(err)
 
         /**
          * Get a value from a type implementing serde serialization.
@@ -153,9 +131,7 @@ public class Value internal constructor(
     /**
      * Inspect this value using a simple visitor.
      */
-    public fun visit(visitor: VisitValue): Result<Unit> {
-        return ValueInner.visit(inner, visitor)
-    }
+    public fun visit(visitor: VisitValue): Result<Unit> = ValueInner.visit(inner, visitor)
 
     /**
      * Try convert this value into a `ULong`.
@@ -372,27 +348,49 @@ internal object ValueInner {
     internal sealed interface Inner {
         data object None : Inner
 
-        data class Bool(val value: Boolean) : Inner
+        data class Bool(
+            val value: Boolean,
+        ) : Inner
 
-        data class Str(val value: String) : Inner
+        data class Str(
+            val value: String,
+        ) : Inner
 
-        data class CharValue(val value: Char) : Inner
+        data class CharValue(
+            val value: Char,
+        ) : Inner
 
-        data class I64(val value: Long) : Inner
+        data class I64(
+            val value: Long,
+        ) : Inner
 
-        data class U64(val value: ULong) : Inner
+        data class U64(
+            val value: ULong,
+        ) : Inner
 
-        data class F64(val value: Double) : Inner
+        data class F64(
+            val value: Double,
+        ) : Inner
 
-        data class I128(val value: Int128) : Inner
+        data class I128(
+            val value: Int128,
+        ) : Inner
 
-        data class U128(val value: UInt128) : Inner
+        data class U128(
+            val value: UInt128,
+        ) : Inner
 
-        data class Debug(val value: Any?) : Inner
+        data class Debug(
+            val value: Any?,
+        ) : Inner
 
-        data class Display(val value: Any?) : Inner
+        data class Display(
+            val value: Any?,
+        ) : Inner
 
-        data class ErrorValue(val value: Throwable) : Inner
+        data class ErrorValue(
+            val value: Throwable,
+        ) : Inner
 
         companion object {
             fun fromDebug(value: Any?): Inner = Debug(value)
@@ -408,15 +406,17 @@ internal object ValueInner {
             fun empty(): Inner = None
         }
 
-        fun toBool(): Boolean? = when (this) {
-            is Bool -> value
-            else -> null
-        }
+        fun toBool(): Boolean? =
+            when (this) {
+                is Bool -> value
+                else -> null
+            }
 
-        fun toChar(): Char? = when (this) {
-            is CharValue -> value
-            else -> null
-        }
+        fun toChar(): Char? =
+            when (this) {
+                is CharValue -> value
+                else -> null
+            }
 
         fun toF64(): Double? =
             when (this) {
@@ -476,15 +476,17 @@ internal object ValueInner {
                 else -> null
             }
 
-        fun toBorrowedStr(): String? = when (this) {
-            is Str -> value
-            else -> null
-        }
+        fun toBorrowedStr(): String? =
+            when (this) {
+                is Str -> value
+                else -> null
+            }
 
-        fun toBorrowedError(): Throwable? = when (this) {
-            is ErrorValue -> value
-            else -> null
-        }
+        fun toBorrowedError(): Throwable? =
+            when (this) {
+                is ErrorValue -> value
+                else -> null
+            }
     }
 
     fun formatDisplay(inner: Inner): String =
@@ -503,8 +505,8 @@ internal object ValueInner {
             is Inner.ErrorValue -> inner.value.toString()
         }
 
-    fun visit(inner: Inner, visitor: VisitValue): Result<Unit> {
-        return when (inner) {
+    fun visit(inner: Inner, visitor: VisitValue): Result<Unit> =
+        when (inner) {
             Inner.None -> visitor.visitNull()
             is Inner.Bool -> visitor.visitBool(inner.value)
             is Inner.Str -> visitor.visitBorrowedStr(inner.value)
@@ -518,7 +520,6 @@ internal object ValueInner {
             is Inner.Display -> visitor.visitAny(Value.fromDynDisplay(inner.value))
             is Inner.ErrorValue -> visitor.visitBorrowedError(inner.value)
         }
-    }
 }
 
 public fun String.toValue(): Value = Value.fromInner(ValueInner.Inner.Str(this))

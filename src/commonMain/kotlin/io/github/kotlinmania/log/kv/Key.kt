@@ -25,21 +25,18 @@ public fun interface ToKey {
  */
 public class Key private constructor(
     private val key: String,
-) : ToKey, Comparable<Key> {
+) : ToKey,
+    Comparable<Key> {
     public companion object {
         /**
          * Get a key from a string.
          */
-        public fun fromStr(key: String): Key {
-            return Key(key)
-        }
+        public fun fromStr(key: String): Key = Key(key)
 
         /**
          * Build a [Key] from a string. Delegates to [fromStr].
          */
-        public fun from(s: String): Key {
-            return fromStr(s)
-        }
+        public fun from(s: String): Key = fromStr(s)
     }
 
     /**
@@ -57,9 +54,7 @@ public class Key private constructor(
      * nullable return shape is preserved so the contract stays compatible
      * when internal buffering is added later.
      */
-    public fun toBorrowedStr(): String? {
-        return key
-    }
+    public fun toBorrowedStr(): String? = key
 
     /**
      * Return the underlying string. Mirrors a string-reference view of the

@@ -20,20 +20,21 @@ import kotlin.test.assertTrue
 class LibTest {
     @Test
     fun testLevelFilterFromStr() {
-        val cases = listOf(
-            "off" to LevelFilter.Off,
-            "error" to LevelFilter.Error,
-            "warn" to LevelFilter.Warn,
-            "info" to LevelFilter.Info,
-            "debug" to LevelFilter.Debug,
-            "trace" to LevelFilter.Trace,
-            "OFF" to LevelFilter.Off,
-            "ERROR" to LevelFilter.Error,
-            "WARN" to LevelFilter.Warn,
-            "INFO" to LevelFilter.Info,
-            "DEBUG" to LevelFilter.Debug,
-            "TRACE" to LevelFilter.Trace,
-        )
+        val cases =
+            listOf(
+                "off" to LevelFilter.Off,
+                "error" to LevelFilter.Error,
+                "warn" to LevelFilter.Warn,
+                "info" to LevelFilter.Info,
+                "debug" to LevelFilter.Debug,
+                "trace" to LevelFilter.Trace,
+                "OFF" to LevelFilter.Off,
+                "ERROR" to LevelFilter.Error,
+                "WARN" to LevelFilter.Warn,
+                "INFO" to LevelFilter.Info,
+                "DEBUG" to LevelFilter.Debug,
+                "TRACE" to LevelFilter.Trace,
+            )
         for ((input, expected) in cases) {
             assertEquals(expected, LevelFilter.fromStr(input).getOrThrow())
         }
@@ -46,18 +47,19 @@ class LibTest {
         // variant. Only [LevelFilter] does. Lowercase and uppercase variants
         // of the real levels all parse successfully.
         assertTrue(Level.fromStr("OFF").isFailure)
-        val cases = listOf(
-            "error" to Level.Error,
-            "warn" to Level.Warn,
-            "info" to Level.Info,
-            "debug" to Level.Debug,
-            "trace" to Level.Trace,
-            "ERROR" to Level.Error,
-            "WARN" to Level.Warn,
-            "INFO" to Level.Info,
-            "DEBUG" to Level.Debug,
-            "TRACE" to Level.Trace,
-        )
+        val cases =
+            listOf(
+                "error" to Level.Error,
+                "warn" to Level.Warn,
+                "info" to Level.Info,
+                "debug" to Level.Debug,
+                "trace" to Level.Trace,
+                "ERROR" to Level.Error,
+                "WARN" to Level.Warn,
+                "INFO" to Level.Info,
+                "DEBUG" to Level.Debug,
+                "TRACE" to Level.Trace,
+            )
         for ((input, expected) in cases) {
             assertEquals(expected, Level.fromStr(input).getOrThrow())
         }
@@ -66,13 +68,14 @@ class LibTest {
 
     @Test
     fun testLevelAsStr() {
-        val cases = listOf(
-            Level.Error to "ERROR",
-            Level.Warn to "WARN",
-            Level.Info to "INFO",
-            Level.Debug to "DEBUG",
-            Level.Trace to "TRACE",
-        )
+        val cases =
+            listOf(
+                Level.Error to "ERROR",
+                Level.Warn to "WARN",
+                Level.Info to "INFO",
+                Level.Debug to "DEBUG",
+                Level.Trace to "TRACE",
+            )
         for ((input, expected) in cases) {
             assertEquals(expected, input.asStr())
         }
@@ -122,14 +125,15 @@ class LibTest {
 
     @Test
     fun testLevelFilterAsStr() {
-        val cases = listOf(
-            LevelFilter.Off to "OFF",
-            LevelFilter.Error to "ERROR",
-            LevelFilter.Warn to "WARN",
-            LevelFilter.Info to "INFO",
-            LevelFilter.Debug to "DEBUG",
-            LevelFilter.Trace to "TRACE",
-        )
+        val cases =
+            listOf(
+                LevelFilter.Off to "OFF",
+                LevelFilter.Error to "ERROR",
+                LevelFilter.Warn to "WARN",
+                LevelFilter.Info to "INFO",
+                LevelFilter.Debug to "DEBUG",
+                LevelFilter.Trace to "TRACE",
+            )
         for ((input, expected) in cases) {
             assertEquals(expected, input.asStr())
         }
@@ -208,10 +212,12 @@ class LibTest {
     @Test
     fun testMetadataBuilder() {
         val target = "myApp"
-        val metadataTest = MetadataBuilder.new()
-            .level(Level.Debug)
-            .target(target)
-            .build()
+        val metadataTest =
+            MetadataBuilder
+                .new()
+                .level(Level.Debug)
+                .target(target)
+                .build()
         assertEquals(Level.Debug, metadataTest.level())
         assertEquals("myApp", metadataTest.target())
     }
@@ -219,10 +225,12 @@ class LibTest {
     @Test
     fun testMetadataConvenienceBuilder() {
         val target = "myApp"
-        val metadataTest = Metadata.builder()
-            .level(Level.Debug)
-            .target(target)
-            .build()
+        val metadataTest =
+            Metadata
+                .builder()
+                .level(Level.Debug)
+                .target(target)
+                .build()
         assertEquals(Level.Debug, metadataTest.level())
         assertEquals("myApp", metadataTest.target())
     }
@@ -232,13 +240,15 @@ class LibTest {
         val target = "myApp"
         val metadata = MetadataBuilder.new().target(target).build()
         val fmtArgs = Arguments("hello", emptyList())
-        val recordTest = RecordBuilder.new()
-            .args(fmtArgs)
-            .metadata(metadata)
-            .modulePath("foo")
-            .file("bar")
-            .line(30)
-            .build()
+        val recordTest =
+            RecordBuilder
+                .new()
+                .args(fmtArgs)
+                .metadata(metadata)
+                .modulePath("foo")
+                .file("bar")
+                .line(30)
+                .build()
         assertEquals("myApp", recordTest.metadata().target())
         assertEquals("foo", recordTest.modulePath())
         assertEquals("bar", recordTest.file())
@@ -250,13 +260,15 @@ class LibTest {
         val target = "myApp"
         val metadata = Metadata.builder().target(target).build()
         val fmtArgs = Arguments("hello", emptyList())
-        val recordTest = Record.builder()
-            .args(fmtArgs)
-            .metadata(metadata)
-            .modulePath("foo")
-            .file("bar")
-            .line(30)
-            .build()
+        val recordTest =
+            Record
+                .builder()
+                .args(fmtArgs)
+                .metadata(metadata)
+                .modulePath("foo")
+                .file("bar")
+                .line(30)
+                .build()
         assertEquals("myApp", recordTest.target())
         assertEquals("foo", recordTest.modulePath())
         assertEquals("bar", recordTest.file())
@@ -266,13 +278,15 @@ class LibTest {
     @Test
     fun testRecordCompleteBuilder() {
         val target = "myApp"
-        val recordTest = Record.builder()
-            .modulePath("foo")
-            .file("bar")
-            .line(30)
-            .target(target)
-            .level(Level.Error)
-            .build()
+        val recordTest =
+            Record
+                .builder()
+                .modulePath("foo")
+                .file("bar")
+                .line(30)
+                .target(target)
+                .level(Level.Error)
+                .build()
         assertEquals("myApp", recordTest.target())
         assertEquals(Level.Error, recordTest.level())
         assertEquals("foo", recordTest.modulePath())
@@ -306,7 +320,9 @@ class LibTest {
 
     private object NoOpLog : Log {
         override fun enabled(metadata: Metadata): Boolean = false
+
         override fun log(record: Record) = Unit
+
         override fun flush() = Unit
     }
 }
@@ -321,31 +337,38 @@ class LibKeyValuesTest {
     @Test
     fun testRecordKeyValuesBuilder() {
         var seenPairs = 0
-        val visitor = object : io.github.kotlinmania.log.kv.VisitSource {
-            override fun visitPair(
-                key: io.github.kotlinmania.log.kv.Key,
-                value: io.github.kotlinmania.log.kv.Value,
-            ): Result<Unit> {
-                seenPairs += 1
-                return Result.success(Unit)
+        val visitor =
+            object : io.github.kotlinmania.log.kv.VisitSource {
+                override fun visitPair(
+                    key: io.github.kotlinmania.log.kv.Key,
+                    value: io.github.kotlinmania.log.kv.Value,
+                ): Result<Unit> {
+                    seenPairs += 1
+                    return Result.success(Unit)
+                }
             }
-        }
 
-        val source = io.github.kotlinmania.log.kv.Source { v ->
-            v.visitPair(
-                io.github.kotlinmania.log.kv.Key.fromStr("a"),
-                1.toValue(),
-            ).getOrElse { return@Source Result.failure(it) }
-            v.visitPair(
-                io.github.kotlinmania.log.kv.Key.fromStr("b"),
-                2.toValue(),
-            )
-        }
+        val source =
+            io.github.kotlinmania.log.kv.Source { v ->
+                v
+                    .visitPair(
+                        io.github.kotlinmania.log.kv.Key
+                            .fromStr("a"),
+                        1.toValue(),
+                    ).getOrElse { return@Source Result.failure(it) }
+                v.visitPair(
+                    io.github.kotlinmania.log.kv.Key
+                        .fromStr("b"),
+                    2.toValue(),
+                )
+            }
 
-        val recordTest = Record.builder()
-            .target("test")
-            .keyValues(source)
-            .build()
+        val recordTest =
+            Record
+                .builder()
+                .target("test")
+                .keyValues(source)
+                .build()
 
         recordTest.keyValues().visit(visitor).getOrThrow()
         assertEquals(2, seenPairs)
@@ -353,23 +376,35 @@ class LibKeyValuesTest {
 
     @Test
     fun testRecordKeyValuesGetCoerce() {
-        val source = io.github.kotlinmania.log.kv.Source { v ->
-            v.visitPair(
-                io.github.kotlinmania.log.kv.Key.fromStr("a"),
-                io.github.kotlinmania.log.kv.Value.from("1"),
-            ).getOrElse { return@Source Result.failure(it) }
-            v.visitPair(
-                io.github.kotlinmania.log.kv.Key.fromStr("b"),
-                io.github.kotlinmania.log.kv.Value.from("2"),
-            )
-        }
-        val record = Record.builder()
-            .target("test")
-            .keyValues(source)
-            .build()
+        val source =
+            io.github.kotlinmania.log.kv.Source { v ->
+                v
+                    .visitPair(
+                        io.github.kotlinmania.log.kv.Key
+                            .fromStr("a"),
+                        io.github.kotlinmania.log.kv.Value
+                            .from("1"),
+                    ).getOrElse { return@Source Result.failure(it) }
+                v.visitPair(
+                    io.github.kotlinmania.log.kv.Key
+                        .fromStr("b"),
+                    io.github.kotlinmania.log.kv.Value
+                        .from("2"),
+                )
+            }
+        val record =
+            Record
+                .builder()
+                .target("test")
+                .keyValues(source)
+                .build()
 
-        val got = record.keyValues().get(io.github.kotlinmania.log.kv.Key.fromStr("b"))
-            ?: error("missing key")
+        val got =
+            record.keyValues().get(
+                io.github.kotlinmania.log.kv.Key
+                    .fromStr("b"),
+            )
+                ?: error("missing key")
         assertEquals("2", got.toBorrowedStr())
     }
 }

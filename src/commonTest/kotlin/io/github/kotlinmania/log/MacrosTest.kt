@@ -12,7 +12,9 @@ import kotlin.test.Test
  */
 private class MacrosLogger : Log {
     override fun enabled(metadata: Metadata): Boolean = false
+
     override fun log(record: Record) {}
+
     override fun flush() {}
 }
 
@@ -175,11 +177,12 @@ class MacrosTest {
                 target = "my_target",
                 level = lvl,
                 args = formatArgs("hello"),
-                kvs = arrayOf(
-                    kv("cat_1", "chashu".toValue()),
-                    kv("cat_2", "nori".toValue()),
-                    kv("cat_count", 2.toValue()),
-                ),
+                kvs =
+                    arrayOf(
+                        kv("cat_1", "chashu".toValue()),
+                        kv("cat_2", "nori".toValue()),
+                        kv("cat_count", 2.toValue()),
+                    ),
             )
         }
     }
@@ -189,11 +192,12 @@ class MacrosTest {
         val logger = MacrosLogger()
 
         for (lvl in Level.entries) {
-            val catMath = run {
-                var x = 0
-                x += 1
-                x + 1
-            }
+            val catMath =
+                run {
+                    var x = 0
+                    x += 1
+                    x + 1
+                }
             log(
                 logger = logger,
                 target = "my_target",

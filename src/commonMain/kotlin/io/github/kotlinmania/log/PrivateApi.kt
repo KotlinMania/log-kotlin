@@ -18,28 +18,23 @@ import kotlin.native.HiddenFromObjC
  * `List<Pair<...>>`, and `Triple`) which fail `-Werror`.
  */
 
+@HiddenFromObjC
+public fun formatArgs(format: String, vararg args: Any?): Arguments = Arguments(format, args.toList())
 
 @HiddenFromObjC
-public fun formatArgs(format: String, vararg args: Any?): Arguments {
-    return Arguments(format, args.toList())
-}
+public fun modulePath(): String = "<module-path>"
 
 @HiddenFromObjC
-public fun modulePath(): String {
-    return "<module-path>"
-}
-
-@HiddenFromObjC
-public fun stringify(value: Any?): String {
-    return value.toString()
-}
+public fun stringify(value: Any?): String = value.toString()
 
 // Types for the `kv` argument.
 
 internal sealed interface KVs {
     public fun intoKvs(): Source?
 
-    public data class Slice(private val kvs: List<Pair<String, Value>>) : KVs {
+    public data class Slice(
+        private val kvs: List<Pair<String, Value>>,
+    ) : KVs {
         override fun intoKvs(): Source = kvs.intoSource()
     }
 
@@ -63,9 +58,7 @@ private fun List<Pair<String, Value>>.intoSource(): Source =
  */
 @HiddenFromObjC
 public class GlobalLogger : Log {
-    override fun enabled(metadata: Metadata): Boolean {
-        return logger().enabled(metadata)
-    }
+    override fun enabled(metadata: Metadata): Boolean = logger().enabled(metadata)
 
     override fun log(record: Record) {
         logger().log(record)
@@ -86,14 +79,16 @@ private fun <L : Log> logImpl(
 ) {
     val (target, modulePath, loc) = targetModulePathAndLoc
 
-    val builder = Record.builder()
-        .args(args)
-        .level(level)
-        .target(target)
-        .modulePathStatic(modulePath)
-        .fileStatic(loc.file)
-        .line(loc.line)
-        .keyValues(kvs)
+    val builder =
+        Record
+            .builder()
+            .args(args)
+            .level(level)
+            .target(target)
+            .modulePathStatic(modulePath)
+            .fileStatic(loc.file)
+            .line(loc.line)
+            .keyValues(kvs)
 
     logger.log(builder.build())
 }
@@ -115,34 +110,28 @@ internal fun <L : Log> log(
 }
 
 @HiddenFromObjC
-public fun <L : Log> enabled(logger: L, level: Level, target: String): Boolean {
-    return logger.enabled(Metadata.builder().level(level).target(target).build())
-}
+public fun <L : Log> enabled(logger: L, level: Level, target: String): Boolean =
+    logger.enabled(
+        Metadata
+            .builder()
+            .level(level)
+            .target(target)
+            .build(),
+    )
 
 @HiddenFromObjC
-public fun loc(): Location {
-    return Location.caller()
-}
+public fun loc(): Location = Location.caller()
 
 @HiddenFromObjC
-public fun <V : io.github.kotlinmania.log.kv.ToValue> captureToValue(v: V): Value {
-    return v.toValue()
-}
+public fun <V : io.github.kotlinmania.log.kv.ToValue> captureToValue(v: V): Value = v.toValue()
 
 @HiddenFromObjC
-public fun captureDebug(v: Any?): Value {
-    return Value.fromDebug(v)
-}
+public fun captureDebug(v: Any?): Value = Value.fromDebug(v)
 
 @HiddenFromObjC
-public fun captureDisplay(v: Any?): Value {
-    return Value.fromDisplay(v)
-}
+public fun captureDisplay(v: Any?): Value = Value.fromDisplay(v)
 
 @HiddenFromObjC
-public fun captureError(v: Throwable): Value {
-    return Value.fromDynError(v)
-}
+public fun captureError(v: Throwable): Value = Value.fromDynError(v)
 
 // captureSval and captureSerde are omitted because they depend on external crates (sval, serde_core).
-

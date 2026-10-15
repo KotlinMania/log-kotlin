@@ -160,11 +160,12 @@ private fun divmod128By64(hi: ULong, lo: ULong, divisor: ULong): Triple<ULong, U
     var remainder: ULong = 0u
     for (i in 127 downTo 0) {
         // Shift remainder left by 1 and pull in the next bit of the dividend.
-        val bit: ULong = if (i >= 64) {
-            (hi shr (i - 64)) and 1uL
-        } else {
-            (lo shr i) and 1uL
-        }
+        val bit: ULong =
+            if (i >= 64) {
+                (hi shr (i - 64)) and 1uL
+            } else {
+                (lo shr i) and 1uL
+            }
         remainder = (remainder shl 1) or bit
         if (remainder >= divisor) {
             remainder -= divisor
