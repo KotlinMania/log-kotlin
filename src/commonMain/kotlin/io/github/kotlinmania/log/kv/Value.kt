@@ -420,24 +420,33 @@ internal object ValueInner {
 
         fun toF64(): Double? =
             when (this) {
-                is F64 -> value
+                is F64 -> {
+                    value
+                }
+
                 is I64 -> {
                     val intValue = value.toInt()
                     if (intValue.toLong() != value) null else intValue.toDouble()
                 }
+
                 is U64 -> {
                     val uintValue = value.toUInt()
                     if (uintValue.toULong() != value) null else uintValue.toDouble()
                 }
+
                 is I128 -> {
                     val intValue = value.toInt()
                     if (intValue == null) null else intValue.toDouble()
                 }
+
                 is U128 -> {
                     val uintValue = value.toUInt()
                     if (uintValue == null) null else uintValue.toDouble()
                 }
-                else -> null
+
+                else -> {
+                    null
+                }
             }
 
         fun toI64(): Long? =

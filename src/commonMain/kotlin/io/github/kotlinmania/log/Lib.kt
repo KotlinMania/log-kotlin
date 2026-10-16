@@ -611,13 +611,17 @@ public fun setLogger(logger: Log): Result<Unit> {
             STATE.store(INITIALIZED)
             Result.success(Unit)
         }
+
         INITIALIZING -> {
             while (STATE.load() == INITIALIZING) {
                 // spin
             }
             Result.failure(SetLoggerError())
         }
-        else -> Result.failure(SetLoggerError())
+
+        else -> {
+            Result.failure(SetLoggerError())
+        }
     }
 }
 
