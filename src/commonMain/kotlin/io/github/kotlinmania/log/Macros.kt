@@ -66,7 +66,7 @@ public fun log(
     args: Arguments,
 ) {
     logImpl(
-        logger = __logGlobalLogger,
+        logger = globalLogger,
         target = modulePath(),
         level = level,
         kvs = null,
@@ -80,7 +80,7 @@ public fun log(
     args: Arguments,
 ) {
     logImpl(
-        logger = __logGlobalLogger,
+        logger = globalLogger,
         target = target,
         level = level,
         kvs = null,
@@ -258,9 +258,9 @@ public fun trace(logger: Log, target: String, args: Arguments) {
 /**
  * Determines if a log message with the specified [Level] would be logged.
  */
-public fun logEnabled(level: Level): Boolean = logEnabled(level = level, target = modulePath(), logger = __logGlobalLogger)
+public fun logEnabled(level: Level): Boolean = logEnabled(level = level, target = modulePath(), logger = globalLogger)
 
-public fun logEnabled(level: Level, target: String): Boolean = logEnabled(level = level, target = target, logger = __logGlobalLogger)
+public fun logEnabled(level: Level, target: String): Boolean = logEnabled(level = level, target = target, logger = globalLogger)
 
 public fun logEnabled(level: Level, target: String, logger: Log): Boolean {
     val lvl = level
@@ -268,7 +268,7 @@ public fun logEnabled(level: Level, target: String, logger: Log): Boolean {
 }
 
 @HiddenFromObjC
-public val __logGlobalLogger: GlobalLogger = GlobalLogger()
+public val globalLogger: GlobalLogger = GlobalLogger()
 
 // Helpers for building structured key-values.
 //
