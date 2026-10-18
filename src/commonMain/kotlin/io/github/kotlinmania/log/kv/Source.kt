@@ -149,18 +149,11 @@ public interface VisitSource {
     public fun visitPair(key: Key, value: Value): Result<Unit>
 }
 
-/**
- * Alias for [VisitSource] preserving the upstream legacy `Visitor` name. The
- * upstream Rust crate re-exports VisitSource under the name Visitor when the
- * kv_unstable feature is enabled, and marks it deprecated; the Kotlin
- * counterpart is also deprecated.
- */
 @Deprecated(
     message = "Use VisitSource directly.",
     replaceWith = ReplaceWith("VisitSource"),
     level = DeprecationLevel.WARNING,
 )
-public typealias Visitor = VisitSource
 
 /**
  * Hidden from Swift Export: a public `Pair<K, V>` receiver drags the
