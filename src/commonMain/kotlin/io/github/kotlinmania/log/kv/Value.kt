@@ -240,12 +240,6 @@ public class Value internal constructor(
     public override fun toString(): String = ValueInner.formatDisplay(inner)
 }
 
-@Deprecated(
-    message = "Use VisitValue directly.",
-    replaceWith = ReplaceWith("VisitValue"),
-    level = DeprecationLevel.WARNING,
-)
-
 /**
  * A visitor for a [Value].
  *

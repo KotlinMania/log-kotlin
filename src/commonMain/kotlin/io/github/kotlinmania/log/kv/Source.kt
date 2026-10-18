@@ -149,12 +149,6 @@ public interface VisitSource {
     public fun visitPair(key: Key, value: Value): Result<Unit>
 }
 
-@Deprecated(
-    message = "Use VisitSource directly.",
-    replaceWith = ReplaceWith("VisitSource"),
-    level = DeprecationLevel.WARNING,
-)
-
 /**
  * Hidden from Swift Export: a public `Pair<K, V>` receiver drags the
  * `kotlin.Pair` stdlib bridge into the generated Swift module, where the
