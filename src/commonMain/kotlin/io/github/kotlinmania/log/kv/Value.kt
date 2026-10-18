@@ -241,19 +241,6 @@ public class Value internal constructor(
 }
 
 /**
- * Alias for [VisitValue] preserving the upstream legacy `Visit` name. The
- * upstream Rust crate re-exports VisitValue under the name Visit when the
- * kv_unstable feature is enabled, and marks it deprecated; the Kotlin
- * counterpart is also deprecated.
- */
-@Deprecated(
-    message = "Use VisitValue directly.",
-    replaceWith = ReplaceWith("VisitValue"),
-    level = DeprecationLevel.WARNING,
-)
-public typealias Visit = VisitValue
-
-/**
  * A visitor for a [Value].
  *
  * Also see [Value]'s documentation on serialization. Value visitors are a simple alternative
